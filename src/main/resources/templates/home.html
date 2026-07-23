@@ -1,26 +1,25 @@
 <!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}"> <head>
+    <title>Início</title>
+</head>
+<body>
 
-<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Pouso - Login</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/beercss@3.5.1/dist/cdn/beer.min.css"
-            rel="stylesheet"
-        />
-        <script
-            type="module"
-            src="https://cdn.jsdelivr.net/npm/beercss@3.5.1/dist/cdn/beer.min.js"
-        ></script>
-        <title>Pouso</title>
-    </head>
-    <body>
-        <h1>Tá bombando</h1>
-        <p>Deu tudo certo, bó codar!</p>
-        <div th:if="${cpf}" class="session">
-            <p>Seu cpf é:</p>
-            <p th:text="${cpf}"></p>
-        </div>
-    </body>
+    <div layout:fragment="content">
+        
+        <article class="border center-align padding extra">
+            
+            <i class="extra large primary-text">rocket_launch</i>
+            
+            <div class="space"></div>
+            
+            <h4>Tá bombando!</h4>
+            <p>Deu tudo certo. Bó codar!</p>
+            
+        </article>
+
+    </div>
+
+</body>
 </html>

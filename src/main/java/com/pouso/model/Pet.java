@@ -3,28 +3,33 @@ package com.pouso.model;
 import java.time.LocalDate;
 
 public class Pet {
-
-    private final String nome;
-    private final String cpfDono;
-    private final String bio;
-    private final String sexo;
-    private final int tipoPet;
-    private final LocalDate dataNasc;
-    private final LocalDate dataCadastro;
-    private final String porte;
-    private final boolean castrado;
+    private String nome;
+    private String cpfDono;
+    private String bio;
+    private String sexo;
+    private Integer tipoPet;
+    private LocalDate dataNasc;    // DATE mapeado para o java.time
+    private LocalDate dataCadastro;
+    private String porte;
+    private Boolean isPermanente;
+    private Boolean isCastrado;
+    private String admAprovou;
+    private String fotoPet;
 
     public Pet(
-        String nome,
-        String cpfDono,
-        String bio,
-        String sexo,
-        int tipoPet,
-        LocalDate dataNasc,
-        LocalDate dataCadastro,
-        String porte,
-        boolean castrado
+        String nome, String cpfDono, String bio, String sexo, Integer tipoPet,
+        LocalDate dataNasc, LocalDate dataCadastro, String porte,
+        Boolean isCastrado
     ) {
+        this(
+            nome, cpfDono, bio, sexo, tipoPet, dataNasc, dataCadastro, porte,
+            null, isCastrado, null, null
+        );
+    }
+
+    public Pet(String nome, String cpfDono, String bio, String sexo, Integer tipoPet,
+               LocalDate dataNasc, LocalDate dataCadastro, String porte,
+               Boolean isPermanente, Boolean isCastrado, String admAprovou, String fotoPet) {
         this.nome = nome;
         this.cpfDono = cpfDono;
         this.bio = bio;
@@ -33,42 +38,45 @@ public class Pet {
         this.dataNasc = dataNasc;
         this.dataCadastro = dataCadastro;
         this.porte = porte;
-        this.castrado = castrado;
+        this.isPermanente = isPermanente;
+        this.isCastrado = isCastrado;
+        this.admAprovou = admAprovou;
+        this.fotoPet = fotoPet;
     }
 
-    public String getNome() {
-        return nome;
-    }
+    public String getFotoPet() { return fotoPet; }
+    public void setFotoPet(String fotoPet) { this.fotoPet = fotoPet; }
 
-    public String getCpfDono() {
-        return cpfDono;
-    }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
-    public String getBio() {
-        return bio;
-    }
+    public String getCpfDono() { return cpfDono; }
+    public void setCpfDono(String cpfDono) { this.cpfDono = cpfDono; }
 
-    public String getSexo() {
-        return sexo;
-    }
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
 
-    public int getTipoPet() {
-        return tipoPet;
-    }
+    public String getSexo() { return sexo; }
+    public void setSexo(String sexo) { this.sexo = sexo; }
 
-    public LocalDate getDataNasc() {
-        return dataNasc;
-    }
+    public Integer getTipoPet() { return tipoPet; }
+    public void setTipoPet(Integer tipoPet) { this.tipoPet = tipoPet; }
 
-    public LocalDate getDataCadastro() {
-        return dataCadastro;
-    }
+    public LocalDate getDataNasc() { return dataNasc; }
+    public void setDataNasc(LocalDate dataNasc) { this.dataNasc = dataNasc; }
 
-    public String getPorte() {
-        return porte;
-    }
+    public LocalDate getDataCadastro() { return dataCadastro; }
+    public void setDataCadastro(LocalDate dataCadastro) { this.dataCadastro = dataCadastro; }
 
-    public boolean isCastrado() {
-        return castrado;
-    }
+    public String getPorte() { return porte; }
+    public void setPorte(String porte) { this.porte = porte; }
+
+    public Boolean getIsPermanente() { return isPermanente; }
+    public void setIsPermanente(Boolean isPermanente) { this.isPermanente = isPermanente; }
+
+    public Boolean getIsCastrado() { return isCastrado; }
+    public void setIsCastrado(Boolean isCastrado) { this.isCastrado = isCastrado; }
+
+    public String getAdmAprovou() { return admAprovou; }
+    public void setAdmAprovou(String admAprovou) { this.admAprovou = admAprovou; }
 }

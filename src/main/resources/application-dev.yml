@@ -10,6 +10,14 @@ spring:
   thymeleaf:
     cache: false
 
+  devtools:
+    livereload:
+      enabled: true
+
+  flyway:
+    clean-disabled: true
+    baseline-on-migrate: true
+
 logging:
   level:
     root: DEBUG

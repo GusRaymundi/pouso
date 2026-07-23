@@ -9,6 +9,3 @@ spring:
 
   flyway:
     enabled: true
-
-  thymeleaf:
-    enabled: true

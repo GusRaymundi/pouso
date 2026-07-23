@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">Pouso</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/beercss@4.0.21/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@4.0.21/dist/cdn/beer.min.js"></script>
+    
+    <script> document.addEventListener("DOMContentLoaded", () => {
+            ui('theme', '#6750A4');
+            const mode = window.matchMedia('(prefers-color-scheme: dark)');
+            ui('mode', mode.matches ? 'dark' : 'light');
+        });
+    </script>
+</head>
+<body class="primary surface-container">
+    <nav th:replace="~{fragments/header :: header}" class="top"></nav>
+    <nav th:replace="~{fragments/sidebar :: sidebar}" class="left"></nav>
+
+        <main class="left-round padding surface" style="border-end-start-radius: 0 !important;">
+            <div layout:fragment="content"></div>
+        </main>
+
+</body>
+</html>
