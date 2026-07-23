@@ -18,11 +18,11 @@ public class AuthService {
         validarCadastro(request);
 
         if (personRepository.cpfExiste(request.getCpf())) {
-            throw new IllegalArgumentException("CPF já cadastrado");
+            throw new IllegalArgumentException("CPF ja cadastrado");
         }
 
         if (personRepository.emailExiste(request.getEmail())) {
-            throw new IllegalArgumentException("Email já cadastrado");
+            throw new IllegalArgumentException("Email ja cadastrado");
         }
 
         personRepository.inserirPessoa(
@@ -47,40 +47,62 @@ public class AuthService {
         );
     }
 
+    public Person login(String email, String password) {
+        if (isBlank(email) || isBlank(password)) {
+            return null;
+        }
+
+        if (!validarEmail(email)) {
+            return null;
+        }
+
+        Person person = personRepository.buscarPorEmail(email);
+
+        if (person == null) {
+            return null;
+        }
+
+        if (!person.getPassword().equals(password)) {
+            return null;
+        }
+
+        return person;
+    }
+
     private void validarCadastro(CadastroRequest request) {
         if (request == null) {
-            throw new IllegalArgumentException("Dados do cadastro são obrigatórios");
+            throw new IllegalArgumentException("Dados do cadastro sao obrigatorios");
         }
 
         if (isBlank(request.getCpf()) || request.getCpf().length() != 11) {
-            throw new IllegalArgumentException("CPF deve ter 11 dígitos");
+            throw new IllegalArgumentException("CPF deve ter 11 digitos");
         }
 
         if (isBlank(request.getNome())) {
-            throw new IllegalArgumentException("Nome é obrigatório");
+            throw new IllegalArgumentException("Nome e obrigatorio");
         }
 
         if (isBlank(request.getEmail()) || !validarEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email inválido");
+            throw new IllegalArgumentException("Email invalido");
         }
 
         if (isBlank(request.getPassword())) {
-            throw new IllegalArgumentException("Senha é obrigatória");
+            throw new IllegalArgumentException("Senha e obrigatoria");
         }
 
         if (isBlank(request.getUsername())) {
-            throw new IllegalArgumentException("Username é obrigatório");
+            throw new IllegalArgumentException("Username e obrigatorio");
         }
 
         if (isBlank(request.getTelefone()) || request.getTelefone().length() != 11) {
-            throw new IllegalArgumentException("Telefone deve ter 11 dígitos");
+            throw new IllegalArgumentException("Telefone deve ter 11 digitos");
         }
 
         if (isBlank(request.getGenero()) ||
             (!request.getGenero().equals("M") &&
             !request.getGenero().equals("F") &&
             !request.getGenero().equals("O"))) {
-            throw new IllegalArgumentException("Gênero inválido");
+            throw new IllegalArgumentException("Genero invalido");
         }
     }
 

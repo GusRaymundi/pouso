@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav th:fragment="header" class="top surface-container">
+        
+        <div class="row middle-align">
+            <img src="img/pouso-icon.png" style="width: 35px; margin-right: 0px;">
+            <h3 style="font-family: 'EB Garamond'; margin: 0px;">Pouso</h3>
+        </div>
+
+        <div class="max"></div>
+
+        <div th:unless="${session.user != null}" class="row" style="padding-right: 10px;">
+            <a href="/login">
+                <button class="primary">
+                    <i>login</i>
+                    <span>Entrar</span>
+                </button>
+            </a>
+        </div>
+        <div th:if="${session.cpf != null}" class="row middle-align" style="padding-right: 10px;">
+            <a>
+                <i>notifications</i>
+                <span class="badge"></span>
+            </a>
+            <button class="circle transparent">
+                <img class="responsive circle" src="https://www.w3schools.com/w3images/avatar2.png" alt="Avatar">
+            </button>
+        </div>
+        
+    </nav>
+</body>
+</html>

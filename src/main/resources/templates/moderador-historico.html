@@ -1,0 +1,133 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<head>
+    <title>Histórico</title>
+</head>
+<body>
+
+    <div layout:fragment="content">
+
+        <div class="row cross-center gap margin-bottom wrap">
+            <button type="button" class="border round">
+                <i>category</i>
+                <span>Categoria</span>
+                <i>arrow_drop_down</i>
+            </button>
+            <div class="space"></div>
+            <span class="chip border" th:text="${#lists.size(historico)} + ' registro(s)'">Label</span>
+        </div>
+
+        <h4 class="margin-bottom">Histórico de Aprovações/Reprovações</h4>
+
+        <div th:if="${#lists.isEmpty(historico)}" class="center-align padding extra">
+            <i class="extra large-text grey-text">history</i>
+            <p class="grey-text">Nenhum registro no histórico ainda.</p>
+        </div>
+
+        <div th:each="item : ${historico}"
+             class="row cross-center gap padding margin-bottom surface-container-low round">
+
+            <img th:if="${item.fotoPet != null}"
+                 th:src="${item.fotoPet}"
+                 class="square extra round"
+                 style="object-fit: cover;"
+                 alt="Foto do pet">
+            <div th:unless="${item.fotoPet != null}"
+                 class="square extra round primary-container center-align middle-align">
+                <i class="large">pets</i>
+            </div>
+
+            <div class="max">
+                <h6 th:text="${item.titulo}">Cachorro</h6>
+                <p class="small-text grey-text" th:text="${item.nome} + ' • dono: ' + ${item.donoNome}">
+                    Rex • dono: Carlos
+                </p>
+                <div class="row gap wrap margin-top">
+                    <span class="chip border small" th:text="${item.racaNome}">Raça</span>
+                    <span class="chip border small" th:text="${item.idadeDescricao}">Idade</span>
+                    <span class="chip border small" th:text="${item.porteDescricao}">Porte</span>
+                </div>
+                <button type="button" class="transparent small link" th:attr="data-ui='#detalhes-' + ${item.idHtml}">
+                    <i>more_horiz</i>
+                    <span>Ver detalhes</span>
+                </button>
+            </div>
+
+            <span th:if="${item.aprovado}" class="chip round green white-text">
+                <i>star</i>
+                <span>Aprovado</span>
+            </span>
+            <span th:if="${item.rejeitado}" class="chip round error white-text">
+                <i>star</i>
+                <span>Recusado</span>
+            </span>
+
+            <dialog th:id="'detalhes-' + ${item.idHtml}" class="left-align" style="max-width: 60%; width: 100%; padding: 24px;">
+                <h5 th:text="${item.nome}">Rex</h5>
+
+                <img th:if="${item.fotoPet != null}"
+                     th:src="${item.fotoPet}"
+                     class="responsive round"
+                     style="max-height: 280px; object-fit: cover; width: 100%;"
+                     alt="Foto do pet">
+
+                <div class="grid margin-top">
+                    <div class="s6">
+                        <p class="grey-text small-text">Espécie</p>
+                        <p th:text="${item.titulo}">Cachorro</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Raça</p>
+                        <p th:text="${item.racaNome}">Labrador</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Sexo</p>
+                        <p th:text="${item.sexoDescricao}">Macho</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Porte</p>
+                        <p th:text="${item.porteDescricao}">Médio</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Idade</p>
+                        <p th:text="${item.idadeDescricao}">2 anos</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Castrado</p>
+                        <p th:text="${item.isCastrado != null and item.isCastrado ? 'Sim' : 'Não'}">Sim</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Data de nascimento</p>
+                        <p th:text="${item.dataNascFormatada}">10/05/2023</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Solicitado em</p>
+                        <p th:text="${item.dataCadastroFormatada}">01/07/2026</p>
+                    </div>
+                    <div class="s12">
+                        <p class="grey-text small-text">Sobre o pet</p>
+                        <p th:text="${item.bio}">Cachorro dócil, adora brincar</p>
+                    </div>
+                    <div class="s12">
+                        <p class="grey-text small-text">Doador</p>
+                        <p th:text="${item.donoNome} + ' (CPF: ' + ${item.cpfDono} + ')'">Carlos (CPF: 222...)</p>
+                    </div>
+                    <div class="s12">
+                        <p class="grey-text small-text">Avaliado por</p>
+                        <p th:text="${item.adminNome}">Ana Moderadora</p>
+                    </div>
+                </div>
+
+                <nav class="right-align margin-top">
+                    <button type="button" class="border" th:attr="data-ui='#detalhes-' + ${item.idHtml}">Fechar</button>
+                </nav>
+            </dialog>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

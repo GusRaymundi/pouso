@@ -1,5 +1,7 @@
 package com.pouso.repository;
 
+import com.pouso.model.Person;
+import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -62,5 +64,31 @@ public class PersonRepository {
                 """;
 
         jdbc.update(sql, cpf, username, telefone, genero);
+    }
+
+    public Person buscarPorEmail(String email) {
+        String sql = """
+                SELECT cpf, nome, email, senha
+                FROM pessoa
+                WHERE email = ?
+                """;
+
+        List<Person> pessoas = jdbc.query(
+            sql,
+            (rs, rowNum) ->
+                new Person(
+                    rs.getString("cpf"),
+                    rs.getString("nome"),
+                    rs.getString("email"),
+                    rs.getString("senha")
+                ),
+            email
+        );
+
+        if (pessoas.isEmpty()) {
+            return null;
+        }
+
+        return pessoas.get(0);
     }
 }

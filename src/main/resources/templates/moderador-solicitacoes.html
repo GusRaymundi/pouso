@@ -1,0 +1,139 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<head>
+    <title>Solicitações</title>
+</head>
+<body>
+
+    <div layout:fragment="content">
+
+        <div class="row cross-center gap margin-bottom wrap">
+            <button type="button" class="border round">
+                <i>category</i>
+                <span>Categoria</span>
+                <i>arrow_drop_down</i>
+            </button>
+            <div class="space"></div>
+            <span class="chip border" th:text="${#lists.size(solicitacoes)} + ' pendente(s)'">Label</span>
+        </div>
+
+        <h4 class="margin-bottom">Solicitações Pendentes</h4>
+
+        <div th:if="${#lists.isEmpty(solicitacoes)}" class="center-align padding extra">
+            <i class="extra large-text grey-text">inbox</i>
+            <p class="grey-text">Nenhuma solicitação pendente no momento.</p>
+        </div>
+
+        <div th:each="solicitacao : ${solicitacoes}"
+             class="row cross-center gap padding margin-bottom surface-container-low round">
+
+            <img th:if="${solicitacao.fotoPet != null}"
+                 th:src="${solicitacao.fotoPet}"
+                 class="square extra round"
+                 style="object-fit: cover;"
+                 alt="Foto do pet">
+            <div th:unless="${solicitacao.fotoPet != null}"
+                 class="square extra round primary-container center-align middle-align">
+                <i class="large">pets</i>
+            </div>
+
+            <div class="max">
+                <h6 th:text="${solicitacao.titulo}">Cachorro</h6>
+                <p class="small-text grey-text" th:text="${solicitacao.nome} + ' • dono: ' + ${solicitacao.donoNome}">
+                    Rex • dono: Carlos
+                </p>
+                <div class="row gap wrap margin-top">
+                    <span class="chip border small" th:text="${solicitacao.racaNome}">Raça</span>
+                    <span class="chip border small" th:text="${solicitacao.idadeDescricao}">Idade</span>
+                    <span class="chip border small" th:text="${solicitacao.porteDescricao}">Porte</span>
+                </div>
+                <button type="button" class="transparent small link" th:attr="data-ui='#detalhes-' + ${solicitacao.idHtml}">
+                    <i>more_horiz</i>
+                    <span>Ver detalhes</span>
+                </button>
+            </div>
+
+            <div class="row gap">
+                <form th:action="@{/moderador/solicitacoes/rejeitar}" method="POST">
+                    <input type="hidden" name="nome" th:value="${solicitacao.nome}">
+                    <input type="hidden" name="cpfDono" th:value="${solicitacao.cpfDono}">
+                    <button type="submit" class="circle error" title="Rejeitar">
+                        <i>close</i>
+                    </button>
+                </form>
+
+                <form th:action="@{/moderador/solicitacoes/aprovar}" method="POST">
+                    <input type="hidden" name="nome" th:value="${solicitacao.nome}">
+                    <input type="hidden" name="cpfDono" th:value="${solicitacao.cpfDono}">
+                    <button type="submit" class="round green white-text">
+                        <i>check</i>
+                        <span>Aprovar</span>
+                    </button>
+                </form>
+            </div>
+
+            <dialog th:id="'detalhes-' + ${solicitacao.idHtml}" class="left-align" style="max-width: 60%; width: 100%; padding: 24px;">
+                <h5 th:text="${solicitacao.nome}">Rex</h5>
+
+                <img th:if="${solicitacao.fotoPet != null}"
+                     th:src="${solicitacao.fotoPet}"
+                     class="responsive round"
+                     style="max-height: 280px; object-fit: cover; width: 100%;"
+                     alt="Foto do pet">
+
+                <div class="grid margin-top">
+                    <div class="s6">
+                        <p class="grey-text small-text">Espécie</p>
+                        <p th:text="${solicitacao.titulo}">Cachorro</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Raça</p>
+                        <p th:text="${solicitacao.racaNome}">Labrador</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Sexo</p>
+                        <p th:text="${solicitacao.sexoDescricao}">Macho</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Porte</p>
+                        <p th:text="${solicitacao.porteDescricao}">Médio</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Idade</p>
+                        <p th:text="${solicitacao.idadeDescricao}">2 anos</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Castrado</p>
+                        <p th:text="${solicitacao.isCastrado != null and solicitacao.isCastrado ? 'Sim' : 'Não'}">Sim</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Data de nascimento</p>
+                        <p th:text="${solicitacao.dataNascFormatada}">10/05/2023</p>
+                    </div>
+                    <div class="s6">
+                        <p class="grey-text small-text">Solicitado em</p>
+                        <p th:text="${solicitacao.dataCadastroFormatada}">01/07/2026</p>
+                    </div>
+                    <div class="s12">
+                        <p class="grey-text small-text">Sobre o pet</p>
+                        <p th:text="${solicitacao.bio}">Cachorro dócil, adora brincar</p>
+                    </div>
+                    <div class="s12">
+                        <p class="grey-text small-text">Doador</p>
+                        <p th:text="${solicitacao.donoNome} + ' (CPF: ' + ${solicitacao.cpfDono} + ')'">Carlos (CPF: 222...)</p>
+                    </div>
+                </div>
+
+                <nav class="right-align margin-top">
+                    <button type="button" class="border" th:attr="data-ui='#detalhes-' + ${solicitacao.idHtml}">Fechar</button>
+                </nav>
+            </dialog>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

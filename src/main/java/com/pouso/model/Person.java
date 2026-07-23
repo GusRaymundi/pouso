@@ -14,6 +14,10 @@ public class Person {
         this.password = password;
     }
 
+    public Person(String cpf, String password) {
+        this(cpf, null, null, password);
+    }
+
     public String getCPF() {
         return cpf;
     }

@@ -3,6 +3,7 @@ CREATE TYPE genero_enum AS ENUM ('M', 'F', 'O');
 CREATE TYPE sexo_enum AS ENUM ('M', 'F');
 CREATE TYPE porte_enum AS ENUM ('P', 'M', 'G');
 CREATE TYPE status_enum AS ENUM ('EM_ANDAMENTO', 'CONCLUIDA', 'CANCELADA');
+CREATE TYPE status_aprovacao_enum AS ENUM ('PENDENTE', 'APROVADO', 'REJEITADO');
 
 CREATE TABLE pessoa (
     cpf CHAR(11) PRIMARY KEY,
@@ -52,7 +53,8 @@ CREATE TABLE pet (
     is_permanente BOOLEAN,
     is_castrado BOOLEAN,
     adm_aprovou CHAR(11),
-
+    foto_pet VARCHAR(300),
+    status_aprovacao status_aprovacao_enum NOT NULL DEFAULT 'PENDENTE',
     PRIMARY KEY (nome, cpf_dono),
 
     CONSTRAINT fk_pet_adm
