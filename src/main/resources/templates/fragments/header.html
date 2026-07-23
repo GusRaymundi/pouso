@@ -4,28 +4,30 @@
     <nav th:fragment="header" class="top surface-container">
         
         <div class="row middle-align">
-            <img src="img/pouso-icon.png" style="width: 35px; margin-right: 0px;">
+            <img th:src="@{/img/pouso-icon.png}" style="width: 35px; margin-right: 0px;" alt="Pouso">
             <h3 style="font-family: 'EB Garamond'; margin: 0px;">Pouso</h3>
         </div>
 
         <div class="max"></div>
 
-        <div th:unless="${session.user != null}" class="row" style="padding-right: 10px;">
-            <a href="/login">
+        <div th:if="${currentUser == null}" class="row" style="padding-right: 10px;">
+            <a th:href="@{/login}">
                 <button class="primary">
                     <i>login</i>
                     <span>Entrar</span>
                 </button>
             </a>
         </div>
-        <div th:if="${session.cpf != null}" class="row middle-align" style="padding-right: 10px;">
+        <div th:if="${currentUser != null}" class="row middle-align" style="padding-right: 10px;">
+            <span th:text="|Ola, ${currentUser.username}|">Ola, username</span>
             <a>
                 <i>notifications</i>
                 <span class="badge"></span>
             </a>
-            <button class="circle transparent">
-                <img class="responsive circle" src="https://www.w3schools.com/w3images/avatar2.png" alt="Avatar">
-            </button>
+            <a th:href="@{/perfil}" class="circle transparent">
+                <img th:if="${currentUser.fotoPerfil != null and !currentUser.fotoPerfil.isBlank()}" class="responsive circle" th:src="${currentUser.fotoPerfil}" alt="Avatar">
+                <i th:unless="${currentUser.fotoPerfil != null and !currentUser.fotoPerfil.isBlank()}">account_circle</i>
+            </a>
         </div>
         
     </nav>

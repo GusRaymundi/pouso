@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<head>
+    <title>Perfil</title>
+    <style>
+        .profile-avatar {
+            inline-size: 10rem;
+            block-size: 10rem;
+            object-fit: cover;
+        }
+
+        .profile-empty {
+            min-block-size: 5rem;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <article class="round large-padding surface-container-lowest">
+            <nav class="row middle-align wrap">
+                <a th:href="@{/home}" class="button transparent circle" aria-label="Voltar">
+                    <i>arrow_back</i>
+                </a>
+                <h4 class="max no-margin">Perfil</h4>
+                <a th:if="${canEdit}" th:href="@{/user}" class="button primary">
+                    <i>edit</i>
+                    <span>Editar perfil</span>
+                </a>
+            </nav>
+
+            <div class="grid large-space top-margin">
+                <section class="s12 m4 l4">
+                    <div class="center-align">
+                        <img th:if="${profileUser.fotoPerfil != null and !profileUser.fotoPerfil.isBlank()}"
+                             th:src="${profileUser.fotoPerfil}"
+                             th:alt="|Foto de ${profileUser.nome}|"
+                             class="circle profile-avatar responsive">
+                        <i th:unless="${profileUser.fotoPerfil != null and !profileUser.fotoPerfil.isBlank()}" class="extra">account_circle</i>
+                    </div>
+
+                    <article class="round padding surface-container top-margin">
+                        <h6>Sobre</h6>
+                        <p th:text="${profileUser.bio != null and !profileUser.bio.isBlank() ? profileUser.bio : 'Bio nao informada.'}">
+                            Bio nao informada.
+                        </p>
+                    </article>
+                </section>
+
+                <section class="s12 m8 l8">
+                    <h3 class="no-margin" th:text="${profileUser.nome}">Nome do usuario</h3>
+                    <p class="medium-text small-margin" th:text="|@${profileUser.username}|">@username</p>
+
+                    <div class="row middle-align small-space">
+                        <i>location_on</i>
+                        <span th:text="${location}">Localizacao nao informada</span>
+                    </div>
+
+                    <div class="grid top-margin">
+                        <article class="s12 m4 round padding primary-container center-align">
+                            <h5 th:text="${rating}">--</h5>
+                            <p class="small-text no-margin">media</p>
+                        </article>
+                        <article class="s12 m4 round padding surface-container center-align">
+                            <h5 th:text="${reviewCount}">--</h5>
+                            <p class="small-text no-margin">avaliacoes</p>
+                        </article>
+                        <article class="s12 m4 round padding surface-container center-align">
+                            <h5 th:text="${adoptionCount}">--</h5>
+                            <p class="small-text no-margin">adocoes</p>
+                        </article>
+                    </div>
+
+                    <article class="round padding surface-container top-margin profile-empty">
+                        <h6>Pets cadastrados</h6>
+                        <p th:each="message : ${petsPlaceholder}" th:text="${message}">Nenhum pet cadastrado por enquanto.</p>
+                    </article>
+
+                    <article class="round padding surface-container top-margin profile-empty">
+                        <h6>Avaliacoes</h6>
+                        <p th:each="message : ${reviewsPlaceholder}" th:text="${message}">Nenhuma avaliacao ainda.</p>
+                    </article>
+                </section>
+            </div>
+        </article>
+    </div>
+</body>
+</html>

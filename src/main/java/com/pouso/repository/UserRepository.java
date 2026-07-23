@@ -2,6 +2,7 @@ package com.pouso.repository;
 import com.pouso.model.User;
 import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -12,6 +13,18 @@ public class UserRepository {
     public UserRepository(JdbcTemplate jdbc) { //
         this.jdbc = jdbc;
     }
+
+    private static final RowMapper<User> USER_MAPPER = (rs, rowNum) -> new User(
+        rs.getString("cpf"),
+        rs.getString("nome"),
+        rs.getString("email"),
+        rs.getString("senha"),
+        rs.getString("username"),
+        rs.getString("bio"),
+        rs.getString("genero"),
+        rs.getString("telefone"),
+        rs.getString("foto_perfil")
+    );
 
     public User buscarPorCpf(String cpf) {
         String sql = """
@@ -24,20 +37,7 @@ public class UserRepository {
 
         List<User> users = jdbc.query(
             sql,
-            (rs, rowNum) -> { //trocar o map para criar um objeto User
-                User u = new User(
-                    rs.getString("cpf"),
-                    rs.getString("nome"),
-                    rs.getString("email"),
-                    rs.getString("senha"),
-                    rs.getString("username"),
-                    rs.getString("bio"),
-                    rs.getString("genero"),
-                    rs.getString("telefone"),
-                    rs.getString("foto_perfil")
-                );
-                return u;
-            },
+            USER_MAPPER,
             cpf
         );
 
@@ -46,6 +46,24 @@ public class UserRepository {
         }
 
         return users.get(0); //tirar lista
+    }
+
+    public User buscarPorUsername(String username) {
+        String sql = """
+                SELECT p.cpf, p.nome, p.email, p.senha,
+                       u.username, u.bio, u.genero, u.telefone, u.foto_perfil
+                FROM pessoa p
+                INNER JOIN usuario u ON p.cpf = u.cpf
+                WHERE u.username = ?
+            """;
+
+        List<User> users = jdbc.query(sql, USER_MAPPER, username);
+
+        if (users.isEmpty()) {
+            return null;
+        }
+
+        return users.get(0);
     }
 
     public void atualizar(User user) {
