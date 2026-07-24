@@ -14,6 +14,41 @@
         .profile-empty {
             min-block-size: 5rem;
         }
+
+        .pet-photo {
+            inline-size: 14rem;
+            aspect-ratio: 1;
+            object-fit: cover;
+            flex: 0 0 auto;
+            max-inline-size: 100%;
+        }
+
+        .pet-name {
+            overflow-wrap: anywhere;
+        }
+
+        .pet-card {
+            align-items: center;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .pet-details {
+            min-inline-size: 0;
+        }
+
+        .profile-identity {
+            min-inline-size: 0;
+        }
+
+        .profile-name {
+            overflow-wrap: anywhere;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, var(--primary), var(--tertiary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
     </style>
 </head>
 <body>
@@ -31,57 +66,119 @@
             </nav>
 
             <div class="grid large-space top-margin">
-                <section class="s12 m4 l4">
-                    <div class="center-align">
-                        <img th:if="${profileUser.fotoPerfil != null and !profileUser.fotoPerfil.isBlank()}"
-                             th:src="${profileUser.fotoPerfil}"
-                             th:alt="|Foto de ${profileUser.nome}|"
-                             class="circle profile-avatar responsive">
-                        <i th:unless="${profileUser.fotoPerfil != null and !profileUser.fotoPerfil.isBlank()}" class="extra">account_circle</i>
-                    </div>
+                <div class="s12 m4 l4">
+                    <section>
+                        <div class="center-align">
+                            <img th:if="${profileUser.fotoPerfil != null and !profileUser.fotoPerfil.isBlank()}"
+                                 th:src="${profileUser.fotoPerfil}"
+                                 th:alt="|Foto de ${profileUser.nome}|"
+                                 class="circle profile-avatar responsive">
+                            <i th:unless="${profileUser.fotoPerfil != null and !profileUser.fotoPerfil.isBlank()}" class="extra">account_circle</i>
+                        </div>
 
-                    <article class="round padding surface-container top-margin">
-                        <h6>Sobre</h6>
-                        <p th:text="${profileUser.bio != null and !profileUser.bio.isBlank() ? profileUser.bio : 'Bio nao informada.'}">
-                            Bio nao informada.
-                        </p>
-                    </article>
-                </section>
-
-                <section class="s12 m8 l8">
-                    <h3 class="no-margin" th:text="${profileUser.nome}">Nome do usuario</h3>
-                    <p class="medium-text small-margin" th:text="|@${profileUser.username}|">@username</p>
-
-                    <div class="row middle-align small-space">
-                        <i>location_on</i>
-                        <span th:text="${location}">Localizacao nao informada</span>
-                    </div>
-
-                    <div class="grid top-margin">
-                        <article class="s12 m4 round padding primary-container center-align">
-                            <h5 th:text="${rating}">--</h5>
-                            <p class="small-text no-margin">media</p>
+                        <article class="round padding surface-container top-margin">
+                            <h6>Sobre</h6>
+                            <p th:text="${profileUser.bio != null and !profileUser.bio.isBlank() ? profileUser.bio : 'Bio nao informada.'}">
+                                Bio nao informada.
+                            </p>
                         </article>
-                        <article class="s12 m4 round padding surface-container center-align">
-                            <h5 th:text="${reviewCount}">--</h5>
-                            <p class="small-text no-margin">avaliacoes</p>
+                    </section>
+                </div>
+
+                <div class="s12 m8 l8">
+                    <section>
+                        <article class="round large-padding primary-container small-elevate profile-identity">
+                            <div class="row wrap middle-align medium-space">
+                                <div class="max profile-identity">
+                                    <p class="small-text upper bold no-margin">Perfil publico</p>
+                                    <h2 class="profile-name no-margin" th:text="${profileUser.nome}">Nome do usuario</h2>
+                                    <div class="row wrap small-space small-margin">
+                                        <span class="chip round surface">
+                                            <i>alternate_email</i>
+                                            <span th:text="|@${profileUser.username}|">@username</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </article>
-                        <article class="s12 m4 round padding surface-container center-align">
-                            <h5 th:text="${adoptionCount}">--</h5>
-                            <p class="small-text no-margin">adocoes</p>
-                        </article>
-                    </div>
+
+                        <div class="row middle-align small-space top-margin">
+                            <i>location_on</i>
+                            <span th:text="${location}">Localizacao nao informada</span>
+                        </div>
+
+                        <div class="grid top-margin">
+                            <div class="s12 m4">
+                                <article class="round padding primary-container center-align">
+                                    <h5 th:text="${rating}">--</h5>
+                                    <p class="small-text no-margin">media</p>
+                                </article>
+                            </div>
+                            <div class="s12 m4">
+                                <article class="round padding surface-container center-align">
+                                    <h5 th:text="${reviewCount}">--</h5>
+                                    <p class="small-text no-margin">avaliacoes</p>
+                                </article>
+                            </div>
+                            <div class="s12 m4">
+                                <article class="round padding surface-container center-align">
+                                    <h5 th:text="${adoptionCount}">--</h5>
+                                    <p class="small-text no-margin">adocoes</p>
+                                </article>
+                            </div>
+                        </div>
 
                     <article class="round padding surface-container top-margin profile-empty">
                         <h6>Pets cadastrados</h6>
-                        <p th:each="message : ${petsPlaceholder}" th:text="${message}">Nenhum pet cadastrado por enquanto.</p>
+                        <p th:if="${#lists.isEmpty(pets)}">Nenhum pet cadastrado por enquanto.</p>
+                        <div th:if="${!#lists.isEmpty(pets)}" class="grid">
+                            <div th:each="pet : ${pets}" class="s12 m6">
+                                <a th:href="@{/pet/{username}/{nome}(username=${profileUser.username},nome=${pet.nome})}"
+                                   class="round border padding row wrap medium-space pet-card surface-container">
+                                    <img th:if="${pet.fotoPet != null and !pet.fotoPet.isBlank()}"
+                                         th:src="${pet.fotoPet}"
+                                         th:alt="|Foto de ${pet.nome}|"
+                                         class="round pet-photo">
+                                    <div class="max pet-details">
+                                        <div class="row middle-align">
+                                            <i>pets</i>
+                                            <div class="max pet-details">
+                                                <h6 class="small-margin pet-name" th:text="${pet.nome}">Nome do pet</h6>
+                                                <p class="small-text no-margin" th:text="${pet.titulo}">Especie</p>
+                                            </div>
+                                        </div>
+                                        <div class="row wrap small-space small-margin">
+                                            <span class="chip border small" th:text="${pet.racaNome}">Raca</span>
+                                            <span class="chip border small" th:text="${pet.idadeDescricao}">Idade</span>
+                                            <span class="chip border small" th:text="${pet.porteDescricao}">Porte</span>
+                                        </div>
+                                        <p class="small-text small-margin" th:if="${pet.bio != null and !pet.bio.isBlank()}" th:text="${pet.bio}">Bio do pet</p>
+                                    </div>
+                                    <i>chevron_right</i>
+                                </a>
+                            </div>
+                        </div>
                     </article>
 
                     <article class="round padding surface-container top-margin profile-empty">
                         <h6>Avaliacoes</h6>
-                        <p th:each="message : ${reviewsPlaceholder}" th:text="${message}">Nenhuma avaliacao ainda.</p>
+                        <p th:if="${#lists.isEmpty(reviews)}">Nenhuma avaliacao ainda.</p>
+                        <div th:if="${!#lists.isEmpty(reviews)}" class="grid">
+                            <div th:each="review : ${reviews}" class="s12">
+                                <article class="round border padding">
+                                    <div class="row middle-align small-space wrap">
+                                        <i>star</i>
+                                        <strong th:text="|${review.nota}/5|">5/5</strong>
+                                        <span class="small-text" th:text="|por ${review.autor_nome} sobre ${review.pet_nome}|">por adotante sobre pet</span>
+                                        <span class="small-text max right-align" th:text="${#temporals.format(review.data, 'dd/MM/yyyy')}">01/01/2025</span>
+                                    </div>
+                                    <p class="small-margin" th:text="${review.comentario}">Comentario da avaliacao.</p>
+                                </article>
+                            </div>
+                        </div>
                     </article>
-                </section>
+                    </section>
+                </div>
             </div>
         </article>
     </div>

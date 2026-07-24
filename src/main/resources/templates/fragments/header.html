@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        .header-avatar {
+            inline-size: 2.5rem;
+            block-size: 2.5rem;
+            object-fit: cover;
+        }
+    </style>
+</head>
 <body>
     <nav th:fragment="header" class="top surface-container">
-        
+
         <div class="row middle-align">
             <img th:src="@{/img/pouso-icon.png}" style="width: 35px; margin-right: 0px;" alt="Pouso">
             <h3 style="font-family: 'EB Garamond'; margin: 0px;">Pouso</h3>
@@ -19,17 +28,22 @@
             </a>
         </div>
         <div th:if="${currentUser != null}" class="row middle-align" style="padding-right: 10px;">
-            <span th:text="|Ola, ${currentUser.username}|">Ola, username</span>
+            <a th:href="@{/perfil}" class="chip medium primary-container">
+                <i>person</i>
+                <span>
+                    <span class="small">Ola,</span><br>
+                    <strong th:text="${currentUser.username}">username</strong>
+                </span>
+            </a>
             <a>
                 <i>notifications</i>
-                <span class="badge"></span>
             </a>
-            <a th:href="@{/perfil}" class="circle transparent">
-                <img th:if="${currentUser.fotoPerfil != null and !currentUser.fotoPerfil.isBlank()}" class="responsive circle" th:src="${currentUser.fotoPerfil}" alt="Avatar">
+            <a th:href="@{/perfil}" class="button circle transparent" aria-label="Abrir perfil">
+                <img th:if="${currentUser.fotoPerfil != null and !currentUser.fotoPerfil.isBlank()}" class="circle header-avatar" th:src="${currentUser.fotoPerfil}" alt="Avatar">
                 <i th:unless="${currentUser.fotoPerfil != null and !currentUser.fotoPerfil.isBlank()}">account_circle</i>
             </a>
         </div>
-        
+
     </nav>
 </body>
 </html>
