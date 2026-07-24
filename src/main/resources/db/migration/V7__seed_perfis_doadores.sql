@@ -31,7 +31,6 @@ INSERT INTO usuario (cpf, username, bio, genero, telefone, foto_perfil) VALUES
 ('87777777777', 'renataadota', 'Busco pets para lar temporario e permanente.', 'F', '51999990006', 'https://api.dicebear.com/9.x/initials/svg?seed=Renata%20Adotante');
 
 INSERT INTO endereco (usuario_cpf, cep, rua, numero, complemento, bairro, cidade, uf) VALUES
-('22222222222', '90010000', 'Rua dos Andradas', '1200', null, 'Centro Historico', 'Porto Alegre', 'RS'),
 ('33333333642', '90610000', 'Avenida Ipiranga', '6681', 'Casa 2', 'Partenon', 'Porto Alegre', 'RS'),
 ('84444444444', '90430000', 'Rua Padre Chagas', '85', null, 'Moinhos de Vento', 'Porto Alegre', 'RS'),
 ('85555555555', '90570020', 'Rua Dom Pedro II', '310', 'Apto 402', 'Sao Joao', 'Porto Alegre', 'RS'),
