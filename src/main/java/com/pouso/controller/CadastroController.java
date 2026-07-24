@@ -21,7 +21,7 @@ public class CadastroController {
 
     @GetMapping
     public String cadastroScreen() {
-        return "cadastro";
+        return "auth/cadastro";
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -29,10 +29,10 @@ public class CadastroController {
         try {
             authService.cadastrar(request);
             model.addAttribute("success", "Usuário cadastrado com sucesso!");
-            return "cadastro";
+            return "auth/cadastro";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            return "cadastro";
+            return "auth/cadastro";
         }
     }
 

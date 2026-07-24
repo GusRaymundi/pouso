@@ -23,7 +23,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String loginScreen() {
-        return "login";
+        return "auth/login";
     }
 
     @PostMapping("/login")
@@ -44,16 +44,16 @@ public class LoginController {
                 return "redirect:/sudo/users";
             }
 
-            return "redirect:/home";
+            return "redirect:/";
         }
 
         model.addAttribute("error", "Email ou senha inválidos");
-        return "login";
+        return "auth/login";
     }
 
     @PostMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/home";
+        return "redirect:/";
     }
 }

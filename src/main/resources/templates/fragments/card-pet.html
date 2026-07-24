@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="petCard(pet)"
+     class="surface-container-low round padding">
+
+
+     
+    <img 
+        th:if="${pet.fotoPet != null}"
+        th:src="${pet.fotoPet}"
+        width="250"
+        height="200"
+        style="object-fit: cover; border-radius: 12px;"
+        alt="Foto do pet">
+
+
+    <div th:unless="${pet.fotoPet != null}"
+         class="center-align padding">
+
+        <i class="large">
+            pets
+        </i>
+
+    </div>
+
+
+    <div class="info-basicas-pet">
+    <h3 th:text="${pet.nome}" class="pet-nome">
+        Nome do pet
+    </h3>
+
+
+
+    <p class="pet-sexo">
+        <span th:text="${pet.sexo}">
+            M
+        </span>
+    </p>
+</div>
+
+    <p class="pet-tipo-adocao">
+
+        <span th:if="${pet.isPermanente}">
+            Adoção permanente
+        </span>
+
+        <span th:unless="${pet.isPermanente}">
+            Adoção temporária
+        </span>
+
+    </p>
+
+
+    <a
+        th:href="@{/pets/{cpf}/{nome}(
+            cpf=${pet.cpfDono},
+            nome=${pet.nome}
+        )}"
+        class="button">
+
+        Ver mais
+
+    </a>
+
+
+</div>
+
+</html>

@@ -1,15 +1,20 @@
 package com.pouso.controller;
 
+import com.pouso.model.Pet;
 import com.pouso.model.PetCadastroForm;
 import com.pouso.service.PetService;
 import com.pouso.service.PetValidationException;
 import jakarta.servlet.http.HttpSession;
+
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -36,7 +41,7 @@ public class PetController {
             model.addAttribute("petForm", new PetCadastroForm());
         }
 
-        return "cadastro-pet";
+        return "pet/cadastro";
     }
 
     @PostMapping("/cadastrar")
@@ -56,7 +61,7 @@ public class PetController {
         } catch (PetValidationException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("petForm", form);
-            return "cadastro-pet";
+            return "pet/cadastro";
         }
 
         redirectAttributes.addFlashAttribute(
@@ -64,5 +69,70 @@ public class PetController {
             "Pet enviado para validação com sucesso!"
         );
         return "redirect:/pets/cadastrar";
+    };
+
+    @GetMapping("/search")
+    public String buscarPets(
+
+            @RequestParam(required = false) Boolean isPermanente,
+            @RequestParam(required = false) String cidade,
+            @RequestParam(required = false) String bairro,
+            @RequestParam(defaultValue = "1") int pagina,
+
+            HttpSession session,
+            Model model
+    ) {
+        // Converte "" para null
+        if (cidade != null && cidade.isBlank()) {
+            cidade = null;
+        }
+
+        if (bairro != null && bairro.isBlank()) {
+            bairro = null;
+        }
+
+        model.addAttribute(
+                "pets",
+                petService.buscarPets(
+                        isPermanente,
+                        cidade,
+                        bairro,
+                        pagina
+                )
+        );
+
+        model.addAttribute(
+                "cidades",
+                petService.listarCidades()
+        );
+
+        model.addAttribute(
+                "bairros",
+                petService.listarBairros()
+        );
+
+        model.addAttribute("paginaAtual",pagina );
+
+        model.addAttribute( "totalPaginas",
+                petService.calcularTotalPaginas(
+                        isPermanente,
+                        cidade,
+                        bairro
+                )
+        );
+
+        // Mantém os filtros selecionados
+        model.addAttribute("tipoSelecionado", isPermanente);
+        model.addAttribute("cidadeSelecionada", cidade);
+        model.addAttribute("bairroSelecionado", bairro);
+
+        List<Pet> lista = petService.buscarPets(
+        isPermanente,
+        cidade,
+        bairro,
+        pagina
+);
+
+        return "pet/search";
     }
 }

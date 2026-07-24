@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/moderator}">
+
+<head>
+    <title>Histórico</title>
+
+    <th:block layout:fragment="head-extra">
+        <link rel="stylesheet"
+              th:href="@{/css/moderator-history.css}">
+    </th:block>
+</head>
+
+<body>
+<section layout:fragment="content">
+
+    <article class="primary-container round large-padding bottom-margin">
+        <div class="row wrap middle-align">
+            <i class="extra">history</i>
+
+            <div class="max">
+                <h3 class="no-margin">Histórico de moderação</h3>
+
+                <p class="no-margin opacity">
+                    Consulte os pets aprovados e recusados anteriormente.
+                </p>
+            </div>
+
+            <span class="chip border"
+                  th:text="|${#lists.size(historico)} registro(s)|">
+                0 registros
+            </span>
+        </div>
+    </article>
+
+    <nav class="row wrap middle-align bottom-margin
+                surface-container-high round padding">
+
+        <button type="button"
+                class="border round"
+                disabled
+                title="Filtro ainda não disponível">
+            <i>category</i>
+            <span>Categoria</span>
+            <i>arrow_drop_down</i>
+        </button>
+    </nav>
+
+    <section class="surface round large-padding moderator-history-list">
+
+        <div class="center-align padding"
+             th:if="${#lists.isEmpty(historico)}">
+
+            <i class="extra opacity">history</i>
+
+            <h5>Nenhum registro encontrado</h5>
+
+            <p class="opacity">
+                As aprovações e recusas aparecerão aqui.
+            </p>
+        </div>
+
+        <article class="surface-container-low round padding bottom-margin"
+                 th:each="item : ${historico}">
+
+            <div class="row wrap middle-align moderator-history-item">
+
+                <div class="moderator-pet-image
+                            round middle-align center-align
+                            primary-container">
+
+                    <img th:if="${item.fotoPet != null
+                                && !item.fotoPet.isBlank()}"
+                         th:src="${item.fotoPet}"
+                         th:alt="|Foto de ${item.nome}|">
+
+                    <i class="large"
+                       th:unless="${item.fotoPet != null
+                                   && !item.fotoPet.isBlank()}">
+                        pets
+                    </i>
+                </div>
+
+                <div class="max moderator-history-description">
+                    <h6 class="no-margin"
+                        th:text="${item.titulo}">
+                        Cachorro
+                    </h6>
+
+                    <p class="small-text opacity no-margin"
+                       th:text="|${item.nome} • tutor: ${item.donoNome}|">
+                        Rex • tutor: Carlos
+                    </p>
+
+                    <div class="row wrap top-margin">
+                        <span class="chip border small"
+                              th:text="${item.racaNome}">
+                            Raça
+                        </span>
+
+                        <span class="chip border small"
+                              th:text="${item.idadeDescricao}">
+                            Idade
+                        </span>
+
+                        <span class="chip border small"
+                              th:text="${item.porteDescricao}">
+                            Porte
+                        </span>
+                    </div>
+
+                    <button type="button"
+                            class="transparent small"
+                            th:attr="data-ui=|#detalhes-${item.idHtml}|">
+                        <i>more_horiz</i>
+                        <span>Ver detalhes</span>
+                    </button>
+                </div>
+
+                <span class="chip round green white-text"
+                      th:if="${item.aprovado}">
+                    <i>check_circle</i>
+                    <span>Aprovado</span>
+                </span>
+
+                <span class="chip round error white-text"
+                      th:if="${item.rejeitado}">
+                    <i>cancel</i>
+                    <span>Recusado</span>
+                </span>
+            </div>
+
+            <dialog class="left-align moderator-history-dialog"
+                    th:id="|detalhes-${item.idHtml}|">
+
+                <header class="row middle-align bottom-margin">
+                    <div class="max">
+                        <h5 class="no-margin"
+                            th:text="${item.nome}">
+                            Rex
+                        </h5>
+
+                        <p class="no-margin opacity"
+                           th:text="${item.titulo}">
+                            Cachorro
+                        </p>
+                    </div>
+
+                    <button type="button"
+                            class="circle transparent"
+                            th:attr="data-ui=|#detalhes-${item.idHtml}|"
+                            aria-label="Fechar">
+                        <i>close</i>
+                    </button>
+                </header>
+
+                <img class="responsive round moderator-dialog-image"
+                     th:if="${item.fotoPet != null
+                             && !item.fotoPet.isBlank()}"
+                     th:src="${item.fotoPet}"
+                     th:alt="|Foto de ${item.nome}|">
+
+                <div class="grid top-margin">
+
+                    <div class="s12 m6">
+                        <small class="opacity">Espécie</small>
+
+                        <p class="no-margin"
+                           th:text="${item.titulo}">
+                            Cachorro
+                        </p>
+                    </div>
+
+                    <div class="s12 m6">
+                        <small class="opacity">Raça</small>
+
+                        <p class="no-margin"
+                           th:text="${item.racaNome}">
+                            Labrador
+                        </p>
+                    </div>
+
+                    <div class="s12 m6">
+                        <small class="opacity">Sexo</small>
+
+                        <p class="no-margin"
+                           th:text="${item.sexoDescricao}">
+                            Macho
+                        </p>
+                    </div>
+
+                    <div class="s12 m6">
+                        <small class="opacity">Porte</small>
+
+                        <p class="no-margin"
+                           th:text="${item.porteDescricao}">
+                            Médio
+                        </p>
+                    </div>
+
+                    <div class="s12 m6">
+                        <small class="opacity">Idade</small>
+
+                        <p class="no-margin"
+                           th:text="${item.idadeDescricao}">
+                            2 anos
+                        </p>
+                    </div>
+
+                    <div class="s12 m6">
+                        <small class="opacity">Castrado</small>
+
+                        <p class="no-margin"
+                           th:text="${item.isCastrado == null
+                               ? 'Não informado'
+                               : item.isCastrado
+                                   ? 'Sim'
+                                   : 'Não'}">
+                            Sim
+                        </p>
+                    </div>
+
+                    <div class="s12 m6">
+                        <small class="opacity">
+                            Data de nascimento
+                        </small>
+
+                        <p class="no-margin"
+                           th:text="${item.dataNascFormatada}">
+                            10/05/2023
+                        </p>
+                    </div>
+
+                    <div class="s12 m6">
+                        <small class="opacity">
+                            Solicitado em
+                        </small>
+
+                        <p class="no-margin"
+                           th:text="${item.dataCadastroFormatada}">
+                            01/07/2026
+                        </p>
+                    </div>
+
+                    <div class="s12">
+                        <small class="opacity">Sobre o pet</small>
+
+                        <p class="no-margin"
+                           th:text="${item.bio}">
+                            Cachorro dócil, adora brincar.
+                        </p>
+                    </div>
+
+                    <div class="s12">
+                        <small class="opacity">Tutor</small>
+
+                        <p class="no-margin"
+                           th:text="|${item.donoNome} (CPF: ${item.cpfDono})|">
+                            Carlos (CPF: 222...)
+                        </p>
+                    </div>
+
+                    <div class="s12">
+                        <small class="opacity">Avaliado por</small>
+
+                        <p class="no-margin"
+                           th:text="${item.adminNome}">
+                            Ana Moderadora
+                        </p>
+                    </div>
+                </div>
+
+                <nav class="right-align top-margin">
+                    <button type="button"
+                            class="border"
+                            th:attr="data-ui=|#detalhes-${item.idHtml}|">
+                        Fechar
+                    </button>
+                </nav>
+            </dialog>
+        </article>
+    </section>
+
+</section>
+</body>
+</html>

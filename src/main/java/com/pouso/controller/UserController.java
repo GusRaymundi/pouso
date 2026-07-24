@@ -27,26 +27,35 @@ public class UserController {
     private final UserRepository userRepository;
     private final PetRepository petRepository;
 
-    public UserController(UserRepository userRepository, PetRepository petRepository) {
+    public UserController(
+        UserRepository userRepository,
+        PetRepository petRepository
+    ) {
         this.userRepository = userRepository;
         this.petRepository = petRepository;
     }
-     
-    @GetMapping("/user") //service user controller edit
-     public String editUser(HttpSession session, Model model) {
-        String sessionCpf = (String) session.getAttribute("cpf");
-        if (sessionCpf == null) {
+
+    @GetMapping("/user")
+    public String editUser(
+        HttpSession session,
+        Model model
+    ) {
+        String cpf = (String) session.getAttribute("cpf");
+
+        if (cpf == null) {
             return "redirect:/login";
         }
 
-        User usuario = userRepository.buscarPorCpf(sessionCpf);
+        User usuario = userRepository.buscarPorCpf(cpf);
+
         if (usuario == null) {
-            return "redirect:/home";
+            return "redirect:/";
         }
 
         model.addAttribute("usuario", usuario);
-        model.addAttribute("endereco", userRepository.buscarEnderecoPorCpf(sessionCpf));
-        return "edit-user";
+        model.addAttribute("endereco", userRepository.buscarEnderecoPorCpf(cpf));
+
+        return "user/edit";
     }
 
     @PostMapping("/user")
@@ -59,18 +68,20 @@ public class UserController {
         Model model,
         RedirectAttributes redirectAttributes
     ) {
-        String sessionCpf = (String) session.getAttribute("cpf");
-        if (sessionCpf == null) {
+        String cpf = (String) session.getAttribute("cpf");
+
+        if (cpf == null) {
             return "redirect:/login";
         }
 
-        User usuarioAtual = userRepository.buscarPorCpf(sessionCpf);
+        User usuarioAtual = userRepository.buscarPorCpf(cpf);
+
         if (usuarioAtual == null) {
-            return "redirect:/home";
+            return "redirect:/";
         }
 
-        usuario.setCpf(sessionCpf);
-        endereco.setUsuarioCpf(sessionCpf);
+        usuario.setCpf(cpf);
+        endereco.setUsuarioCpf(cpf);
 
         try {
             validarEdicao(usuario, endereco);
@@ -80,35 +91,43 @@ public class UserController {
             }
 
             if (fotoArquivo != null && !fotoArquivo.isEmpty()) {
-                usuario.setFotoPerfil(salvarFotoPerfil(sessionCpf, fotoArquivo));
+                usuario.setFotoPerfil(salvarFotoPerfil(cpf, fotoArquivo));
             }
 
-            if (userRepository.emailEmUsoPorOutroCpf(usuario.getEmail(), sessionCpf)) {
+            if (userRepository.emailEmUsoPorOutroCpf(usuario.getEmail(), cpf)) {
                 throw new IllegalArgumentException("Email ja cadastrado por outro usuario");
             }
 
-            if (userRepository.usernameEmUsoPorOutroCpf(usuario.getUsername(), sessionCpf)) {
+            if (userRepository.usernameEmUsoPorOutroCpf(usuario.getUsername(), cpf)) {
                 throw new IllegalArgumentException("Username ja cadastrado por outro usuario");
             }
 
             userRepository.atualizarPerfil(usuario, endereco);
-            redirectAttributes.addFlashAttribute("success", "Perfil atualizado com sucesso.");
+            redirectAttributes.addFlashAttribute(
+                "success",
+                "Alteracoes salvas com sucesso."
+            );
+
             return "redirect:/user";
         } catch (IOException e) {
             model.addAttribute("error", "Nao foi possivel salvar a foto.");
             model.addAttribute("usuario", usuario);
             model.addAttribute("endereco", endereco);
-            return "edit-user";
+            return "user/edit";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("usuario", usuario);
             model.addAttribute("endereco", endereco);
-            return "edit-user";
+            return "user/edit";
         }
     }
 
-    private String salvarFotoPerfil(String cpf, MultipartFile fotoArquivo) throws IOException {
+    private String salvarFotoPerfil(
+        String cpf,
+        MultipartFile fotoArquivo
+    ) throws IOException {
         String contentType = fotoArquivo.getContentType();
+
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new IllegalArgumentException("Escolha um arquivo de imagem valido");
         }
@@ -117,7 +136,10 @@ public class UserController {
             throw new IllegalArgumentException("A foto deve ter no maximo 5MB");
         }
 
-        Path uploadDir = Path.of("uploads", "profile").toAbsolutePath().normalize();
+        Path uploadDir = Path.of("uploads", "profile")
+            .toAbsolutePath()
+            .normalize();
+
         Files.createDirectories(uploadDir);
 
         String extensao = extensaoPermitida(fotoArquivo.getOriginalFilename());
@@ -147,53 +169,89 @@ public class UserController {
     }
 
     @GetMapping("/perfil")
-    public String profile(HttpSession session, Model model) {
+    public String profile(
+        HttpSession session,
+        Model model
+    ) {
         String sessionCpf = (String) session.getAttribute("cpf");
+
         if (sessionCpf == null) {
             return "redirect:/login";
         }
 
         User profileUser = userRepository.buscarPorCpf(sessionCpf);
+
         if (profileUser == null) {
-            return "redirect:/home";
+            return "redirect:/";
         }
 
         return renderProfile(model, profileUser, sessionCpf);
     }
 
     @GetMapping("/perfil/{username}")
-    public String profileByUsername(@PathVariable String username, HttpSession session, Model model) {
+    public String profileByUsername(
+        @PathVariable String username,
+        HttpSession session,
+        Model model
+    ) {
         String sessionCpf = (String) session.getAttribute("cpf");
+
         if (sessionCpf == null) {
             return "redirect:/login";
         }
 
         User profileUser = userRepository.buscarPorUsername(username);
+
         if (profileUser == null) {
-            return "redirect:/home";
+            return "redirect:/";
         }
 
         return renderProfile(model, profileUser, sessionCpf);
     }
 
-    private String renderProfile(Model model, User profileUser, String sessionCpf) {
+    private String renderProfile(
+        Model model,
+        User profileUser,
+        String sessionCpf
+    ) {
         boolean isSelf = sessionCpf.equals(profileUser.getCpf());
 
         model.addAttribute("profileUser", profileUser);
         model.addAttribute("isSelf", isSelf);
         model.addAttribute("canEdit", isSelf);
         model.addAttribute("canDelete", false);
-        model.addAttribute("rating", userRepository.mediaAvaliacoesRecebidas(profileUser.getCpf()));
-        model.addAttribute("reviewCount", userRepository.contarAvaliacoesRecebidas(profileUser.getCpf()));
-        model.addAttribute("adoptionCount", userRepository.contarAdocoesDosPets(profileUser.getCpf()));
-        model.addAttribute("location", userRepository.buscarLocalizacao(profileUser.getCpf()));
-        model.addAttribute("pets", petRepository.listarAprovadosPorDono(profileUser.getCpf()));
-        model.addAttribute("reviews", userRepository.listarAvaliacoesRecebidas(profileUser.getCpf()));
+        model.addAttribute(
+            "rating",
+            userRepository.mediaAvaliacoesRecebidas(profileUser.getCpf())
+        );
+        model.addAttribute(
+            "reviewCount",
+            userRepository.contarAvaliacoesRecebidas(profileUser.getCpf())
+        );
+        model.addAttribute(
+            "adoptionCount",
+            userRepository.contarAdocoesDosPets(profileUser.getCpf())
+        );
+        model.addAttribute(
+            "location",
+            userRepository.buscarLocalizacao(profileUser.getCpf())
+        );
+        model.addAttribute(
+            "pets",
+            petRepository.listarAprovadosPorDono(profileUser.getCpf())
+        );
+        model.addAttribute(
+            "reviews",
+            userRepository.listarAvaliacoesRecebidas(profileUser.getCpf())
+        );
 
-        return "profile";
+        return "user/profile";
     }
 
-    private void validarEdicao(User usuario, Endereco endereco) {
+    private void validarEdicao(
+        User usuario,
+        Endereco endereco
+    ) {
         if (isBlank(usuario.getNome())) {
             throw new IllegalArgumentException("Nome e obrigatorio");
         }
@@ -249,5 +307,4 @@ public class UserController {
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
     }
-
 }

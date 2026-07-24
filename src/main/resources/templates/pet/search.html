@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/app}">
+
+<head>
+    <title>Buscar pets</title>
+
+    <th:block layout:fragment="head-extra">
+        <link rel="stylesheet"
+              th:href="@{/css/search.css}">
+    </th:block>
+</head>
+
+<body>
+<section layout:fragment="content">
+
+    <article class="primary-container round large-padding bottom-margin">
+        <div class="row wrap middle-align">
+            <i class="extra">search</i>
+
+            <div class="max">
+                <h3 class="no-margin">Buscar pets</h3>
+
+                <p class="no-margin opacity">
+                    Encontre pets disponíveis para adoção.
+                </p>
+            </div>
+
+            <span class="chip border"
+                  th:text="|${#lists.size(pets)} encontrado(s)|">
+                0 encontrados
+            </span>
+        </div>
+    </article>
+
+    <form class="surface-container-high round large-padding bottom-margin"
+          th:action="@{/pets/search}"
+          method="get">
+
+        <div class="grid">
+
+            <div class="s12 m4">
+                <div class="field label border">
+
+                    <input id="nome"
+                           name="nome"
+                           type="search"
+                           th:value="${nomeSelecionado}">
+
+                    <label for="nome">Nome do pet</label>
+
+                    <i>pets</i>
+                </div>
+            </div>
+
+            <div class="s12 m4">
+                <div class="field label suffix border">
+                    <select id="cidade"
+                            name="cidade">
+                        <option value="">
+                            Todas as cidades
+                        </option>
+
+                        <option th:each="cidade : ${cidades}"
+                                th:value="${cidade}"
+                                th:text="${cidade}"
+                                th:selected="${cidade == cidadeSelecionada}">
+                            Pelotas
+                        </option>
+                    </select>
+
+                    <label for="cidade">Cidade</label>
+                    <i>arrow_drop_down</i>
+                </div>
+            </div>
+
+            <div class="s12 m4">
+                <div class="field label suffix border">
+                    <select id="bairro"
+                            name="bairro">
+                        <option value="">
+                            Todos os bairros
+                        </option>
+
+                        <option th:each="bairro : ${bairros}"
+                                th:value="${bairro}"
+                                th:text="${bairro}"
+                                th:selected="${bairro == bairroSelecionado}">
+                            Centro
+                        </option>
+                    </select>
+
+                    <label for="bairro">Bairro</label>
+                    <i>arrow_drop_down</i>
+                </div>
+            </div>
+        </div>
+
+        <fieldset class="top-margin">
+            <legend class="bold">
+                Tipo de adoção
+            </legend>
+
+            <div class="row wrap">
+                <label class="radio">
+                    <input type="radio"
+                           name="isPermanente"
+                           value=""
+                           th:checked="${tipoSelecionado == null}">
+
+                    <span>Todas</span>
+                </label>
+
+                <label class="radio">
+                    <input type="radio"
+                           name="isPermanente"
+                           value="true"
+                           th:checked="${tipoSelecionado == true}">
+
+                    <span>Permanente</span>
+                </label>
+
+                <label class="radio">
+                    <input type="radio"
+                           name="isPermanente"
+                           value="false"
+                           th:checked="${tipoSelecionado == false}">
+
+                    <span>Temporária</span>
+                </label>
+            </div>
+        </fieldset>
+
+        <nav class="row wrap right-align top-margin">
+            <a th:href="@{/pets/search}"
+               class="button border">
+                <i>filter_alt_off</i>
+                <span>Limpar filtros</span>
+            </a>
+
+            <button type="submit"
+                    class="primary">
+                <i>search</i>
+                <span>Buscar</span>
+            </button>
+        </nav>
+    </form>
+
+    <section class="surface round large-padding search-results">
+
+        <header class="row wrap middle-align bottom-margin">
+            <div class="max">
+                <h5 class="no-margin">Resultados</h5>
+
+                <p class="no-margin opacity">
+                    Pets que correspondem aos filtros selecionados.
+                </p>
+            </div>
+
+            <span class="chip border"
+                  th:text="|${#lists.size(pets)} nesta página|">
+                0 nesta página
+            </span>
+        </header>
+
+        <div class="center-align padding"
+             th:if="${#lists.isEmpty(pets)}">
+            <i class="extra opacity">search_off</i>
+
+            <h5>Nenhum pet encontrado</h5>
+
+            <p class="opacity">
+                Tente alterar ou remover alguns filtros.
+            </p>
+
+            <a th:href="@{/pets/search}"
+               class="button border">
+                Limpar filtros
+            </a>
+        </div>
+
+        <div class="grid"
+             th:unless="${#lists.isEmpty(pets)}">
+
+            <div class="s12 m6 l4"
+                 th:each="pet : ${pets}">
+
+                <div th:replace="~{fragments/card-pet :: petCard(${pet})}">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <nav class="row wrap middle-align top-margin search-pagination"
+         th:if="${totalPaginas > 0}">
+
+        <div>
+            <span>
+                Página
+
+                <strong th:text="${paginaAtual}">
+                    1
+                </strong>
+
+                de
+
+                <strong th:text="${totalPaginas}">
+                    1
+                </strong>
+            </span>
+        </div>
+
+        <div class="max"></div>
+
+        <div class="row middle-align">
+            <a class="button border round"
+               th:classappend="${paginaAtual <= 1}
+                   ? ' disabled transparent'
+                   : ''"
+               th:href="${paginaAtual > 1}
+                   ? @{/pets/search(
+                       pagina=1,
+                       nome=${nomeSelecionado},
+                       isPermanente=${tipoSelecionado},
+                       cidade=${cidadeSelecionada},
+                       bairro=${bairroSelecionado}
+                   )}
+                   : null"
+               aria-label="Primeira página">
+                <i>first_page</i>
+            </a>
+
+            <a class="button border round"
+               th:classappend="${paginaAtual <= 1}
+                   ? ' disabled transparent'
+                   : ''"
+               th:href="${paginaAtual > 1}
+                   ? @{/pets/search(
+                       pagina=${paginaAtual - 1},
+                       nome=${nomeSelecionado},
+                       isPermanente=${tipoSelecionado},
+                       cidade=${cidadeSelecionada},
+                       bairro=${bairroSelecionado}
+                   )}
+                   : null"
+               aria-label="Página anterior">
+                <i>chevron_left</i>
+            </a>
+
+            <a class="button border round"
+               th:classappend="${paginaAtual >= totalPaginas}
+                   ? ' disabled transparent'
+                   : ''"
+               th:href="${paginaAtual < totalPaginas}
+                   ? @{/pets/search(
+                       pagina=${paginaAtual + 1},
+                       nome=${nomeSelecionado},
+                       isPermanente=${tipoSelecionado},
+                       cidade=${cidadeSelecionada},
+                       bairro=${bairroSelecionado}
+                   )}
+                   : null"
+               aria-label="Próxima página">
+                <i>chevron_right</i>
+            </a>
+
+            <a class="button border round"
+               th:classappend="${paginaAtual >= totalPaginas}
+                   ? ' disabled transparent'
+                   : ''"
+               th:href="${paginaAtual < totalPaginas}
+                   ? @{/pets/search(
+                       pagina=${totalPaginas},
+                       nome=${nomeSelecionado},
+                       isPermanente=${tipoSelecionado},
+                       cidade=${cidadeSelecionada},
+                       bairro=${bairroSelecionado}
+                   )}
+                   : null"
+               aria-label="Última página">
+                <i>last_page</i>
+            </a>
+        </div>
+    </nav>
+
+</section>
+</body>
+</html>
