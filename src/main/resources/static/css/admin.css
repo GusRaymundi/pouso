@@ -1,0 +1,17 @@
+#sidebar .sidebar-search-field {
+    min-width: 0;
+    max-width: 13rem;
+}
+
+#sidebar:not(.max) .sidebar-search-field {
+    width: 3rem;
+    min-width: 3rem;
+    padding-inline: 0;
+    justify-content: center;
+}
+
+#sidebar:not(.max) .sidebar-search-field input,
+#sidebar:not(.max) .sidebar-search-field output,
+#sidebar:not(.max) .sidebar-search-field .suffix {
+    display: none !important;
+}

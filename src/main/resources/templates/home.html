@@ -1,22 +1,32 @@
 <!doctype html>
-<html
-    xmlns:th="http://www.thymeleaf.org"
-    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="~{default}"
->
-    <head>
-        <title>Início</title>
-    </head>
-    <body>
-        <div layout:fragment="content">
-            <article class="border center-align padding extra">
-                <i class="extra large primary-text">rocket_launch</i>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/app}">
 
-                <div class="space"></div>
+<head>
+    <title>Início</title>
+</head>
 
-                <h4>Tá bombando!</h4>
-                <p>Deu tudo certo. Bó codar!</p>
+<body>
+    <section layout:fragment="content">
+        <div class="responsive">
+            <h3>Bem-vindo ao Pouso</h3>
+
+            <p class="large-text">
+                Esta página está usando o layout compartilhado da aplicação.
+            </p>
+
+            <article class="round surface-container-high">
+                <h5>Teste do layout</h5>
+
+                <p>
+                    Se o header, a sidebar, o tema e este conteúdo aparecerem,
+                    a composição está funcionando.
+                </p>
+
             </article>
         </div>
-    </body>
+    </section>
+</body>
 </html>

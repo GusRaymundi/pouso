@@ -23,7 +23,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String loginScreen() {
-        return "login";
+        return "auth/login";
     }
 
     @PostMapping("/login")
@@ -48,7 +48,7 @@ public class LoginController {
         }
 
         model.addAttribute("error", "Email ou senha inválidos");
-        return "login";
+        return "auth/login";
     }
 
     @PostMapping("/logout")

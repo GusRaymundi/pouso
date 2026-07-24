@@ -36,7 +36,7 @@ public class PetController {
             model.addAttribute("petForm", new PetCadastroForm());
         }
 
-        return "cadastro-pet";
+        return "pet/cadastro";
     }
 
     @PostMapping("/cadastrar")
@@ -56,7 +56,7 @@ public class PetController {
         } catch (PetValidationException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("petForm", form);
-            return "cadastro-pet";
+            return "pet/cadastro";
         }
 
         redirectAttributes.addFlashAttribute(

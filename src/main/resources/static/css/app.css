@@ -1,0 +1,11 @@
+#sidebar:not(.max) span,
+#sidebar:not(.max) a > div {
+    display: none !important;
+}
+
+#sidebar:not(.max) .sidebar-search-field {
+    width: 3rem;
+    min-width: 3rem;
+    padding-inline: 0;
+    justify-content: center;
+}
