@@ -1,0 +1,8 @@
+.search-results {
+    min-height: 50vh;
+}
+
+.search-pagination .disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
