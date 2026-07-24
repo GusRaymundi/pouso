@@ -1,130 +1,36 @@
-<!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<!doctype html>
+<html
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{default}"
+>
 <head>
-    <meta charset="UTF-8">
     <title>Cadastro - Pouso</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --md-primary: #6750A4;
-            --md-on-primary: #FFFFFF;
-            --md-primary-container: #EADDFF;
-            --md-surface: #FEF7FF;
-            --md-surface-container-highest: #E6E0E9;
-            --md-outline-variant: #CAC4D0;
-            --md-on-surface: #1D1B20;
-            --md-on-surface-variant: #49454F;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: Arial, Helvetica, sans-serif;
-            background: var(--md-surface);
-            color: var(--md-on-surface);
-        }
-
-        .app-header {
-            height: 88px;
-            background: #FFFFFF;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 48px;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 28px;
-        }
-
-        .menu-icon {
-            font-size: 30px;
-            color: var(--md-on-surface-variant);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-
-            color: #3C2300;
-            font-family: "EB Garamond", serif;
-            font-size: 36.655px;
-            font-style: normal;
-            font-weight: 600;
-            line-height: normal;
-        }
-
-        .logo img {
-            width: 46px;
-            height: 46px;
-            object-fit: contain;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 28px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .header-actions a {
-            text-decoration: none;
-            color: #000000;
-        }
-
-        .btn-login {
-            height: 48px;
-            padding: 0 24px;
-            border-radius: 24px;
-            background: var(--md-primary);
-            color: var(--md-on-primary) !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-login img {
-            width: 18px;
-            height: 18px;
-            object-fit: contain;
-        }
-
-        .page {
-            min-height: calc(100vh - 88px);
-            background: #FFF7FF;
-            padding: 42px;
+        .cadastro-page {
+            min-height: calc(100vh - 128px);
             display: flex;
             justify-content: center;
             align-items: flex-start;
+            padding: 24px;
         }
 
-        .card {
+        .cadastro-card {
             width: 905px;
             min-height: 680px;
-            background: #FFFFFF;
+            background: var(--surface-container-low, #FFFFFF);
             border-radius: 18px;
             padding: 34px 42px;
         }
 
-        .card-header {
+        .cadastro-card-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 42px;
         }
 
-        .card-title {
+        .cadastro-card-title {
             display: flex;
             align-items: center;
             gap: 22px;
@@ -132,14 +38,14 @@
             font-weight: 400;
         }
 
-        .card-title img {
+        .cadastro-card-title img {
             width: 32px;
             height: 32px;
         }
 
-        .close {
+        .cadastro-close {
             font-size: 42px;
-            color: var(--md-on-surface-variant);
+            color: var(--on-surface-variant, #49454F);
         }
 
         .form-area {
@@ -157,9 +63,9 @@
         .text-field {
             width: 212px;
             height: 56px;
-            background: var(--md-surface-container-highest);
+            background: var(--surface-container-highest, #E6E0E9);
             border-radius: 4px 4px 0 0;
-            border-bottom: 1px solid var(--md-on-surface-variant);
+            border-bottom: 1px solid var(--on-surface-variant, #49454F);
             position: relative;
             padding: 8px 42px 6px 16px;
         }
@@ -167,7 +73,7 @@
         .text-field label {
             display: block;
             font-size: 14px;
-            color: var(--md-on-surface-variant);
+            color: var(--on-surface-variant, #49454F);
             margin-bottom: 4px;
         }
 
@@ -177,11 +83,11 @@
             outline: none;
             background: transparent;
             font-size: 17px;
-            color: var(--md-on-surface);
+            color: var(--on-surface, #1D1B20);
         }
 
         .text-field input::placeholder {
-            color: var(--md-on-surface-variant);
+            color: var(--on-surface-variant, #49454F);
             opacity: 1;
         }
 
@@ -189,10 +95,8 @@
             position: absolute;
             right: 12px;
             top: 16px;
-
             width: 24px;
             height: 24px;
-
             object-fit: contain;
         }
 
@@ -200,13 +104,13 @@
             width: 212px;
             grid-row: span 3;
             padding-top: 16px;
-            border-top: 1px solid var(--md-outline-variant);
+            border-top: 1px solid var(--outline-variant, #CAC4D0);
         }
 
         .gender-title {
             font-size: 16px;
             font-weight: bold;
-            color: var(--md-on-surface-variant);
+            color: var(--on-surface-variant, #49454F);
             margin-bottom: 20px;
         }
 
@@ -221,7 +125,7 @@
         .gender-option input {
             width: 24px;
             height: 24px;
-            accent-color: var(--md-primary);
+            accent-color: var(--primary, #6750A4);
         }
 
         .btn-next {
@@ -231,11 +135,48 @@
             height: 48px;
             border: none;
             border-radius: 24px;
-            background: var(--md-primary);
-            color: var(--md-on-primary);
+            background: var(--primary, #6750A4);
+            color: var(--on-primary, #FFFFFF);
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
+        }
+
+        .btn-back {
+            grid-column: 1;
+            justify-self: start;
+            width: 99px;
+            height: 48px;
+            border: 1px solid var(--primary, #6750A4);
+            border-radius: 24px;
+            background: var(--surface-container-low, #FFFFFF);
+            color: var(--primary, #6750A4);
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-finish {
+            grid-column: 2;
+            justify-self: end;
+            width: auto;
+            height: 48px;
+            padding: 0 24px;
+            border: none;
+            border-radius: 24px;
+            background: var(--primary, #6750A4);
+            color: var(--on-primary, #FFFFFF);
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .form-step {
+            display: contents;
+        }
+
+        .form-step[hidden] {
+            display: none;
         }
 
         .message {
@@ -255,101 +196,172 @@
         }
     </style>
 </head>
-
 <body>
+<div layout:fragment="content">
+    <section class="cadastro-page">
+        <article class="cadastro-card">
+            <div class="cadastro-card-header">
+                <div class="cadastro-card-title">
+                    <img src="/icons/account_circle.svg" alt="Cadastro">
+                    <span>Cadastro</span>
+                </div>
 
-<header class="app-header">
-    <div class="header-left">
-        <span class="menu-icon">☰</span>
-
-        <div class="logo">
-            <img src="/img/logo.png" alt="Logo Pouso">
-            <span>Pouso</span>
-        </div>
-    </div>
-
-    <nav class="header-actions">
-        <a class="btn-login" href="/login">
-            <img src="/icons/login.svg" alt="Entrar">
-            <span>Entrar</span>
-        </a>
-        <a href="/cadastro">Cadastrar</a>
-    </nav>
-</header>
-
-<main class="page">
-    <section class="card">
-        <div class="card-header">
-            <div class="card-title">
-                <img src="/icons/account_circle.svg" alt="Cadastro">
-                <span>Cadastro</span>
+                <div class="cadastro-close">&times;</div>
             </div>
 
-            <div class="close">×</div>
-        </div>
+            <form id="cadastroForm" class="form-area" action="/cadastro" method="post">
+                <div class="form-step" data-step="1">
+                    <div class="text-field">
+                        <label>Nome</label>
+                        <input name="nome" placeholder="Nome completo" required>
+                    </div>
 
-        <form class="form-area" action="/cadastro" method="post">
-            <div class="text-field">
-                <label>Nome</label>
-                <input name="nome" placeholder="Nome completo" required>
-            </div>
+                    <div class="text-field">
+                        <label>CPF</label>
+                        <input name="cpf" maxlength="11" placeholder="xxx.xxx.xxx-xx" required>
+                        <img class="clear-icon" src="/icons/field-icon.svg" alt="">
+                    </div>
 
-            <div class="text-field">
-                <label>CPF</label>
-                <input name="cpf" maxlength="11" placeholder="xxx.xxx.xxx-xx" required>
-                <img class="clear-icon" src="/icons/field-icon.svg" alt="">
-            </div>
+                    <div class="text-field">
+                        <label>Username</label>
+                        <input name="username" placeholder="Nome de usu&aacute;rio" required>
+                        <img class="clear-icon" src="/icons/field-icon.svg" alt="">
+                    </div>
 
-            <div class="text-field">
-                <label>Username</label>
-                <input name="username" placeholder="Nome de usuário" required>
-                <img class="clear-icon" src="/icons/field-icon.svg" alt="">
-            </div>
+                    <div class="text-field">
+                        <label>Telefone</label>
+                        <input name="telefone" maxlength="11" placeholder="xx xxxxx xxxx" required>
+                        <img class="clear-icon" src="/icons/field-icon.svg" alt="">
+                    </div>
 
-            <div class="text-field">
-                <label>Telefone</label>
-                <input name="telefone" maxlength="11" placeholder="xx xxxxx xxxx" required>
-                <img class="clear-icon" src="/icons/field-icon.svg" alt="">
-            </div>
+                    <div class="text-field">
+                        <label>Email</label>
+                        <input name="email" type="email" placeholder="email@email" required>
+                        <img class="clear-icon" src="/icons/field-icon.svg" alt="">
+                    </div>
 
-            <div class="text-field">
-                <label>Email</label>
-                <input name="email" type="email" placeholder="email@email" required>
-                <img class="clear-icon" src="/icons/field-icon.svg" alt="">
-            </div>
+                    <div class="gender-box">
+                        <div class="gender-title">G&ecirc;nero</div>
 
-            <div class="gender-box">
-                <div class="gender-title">Gênero</div>
+                        <label class="gender-option">
+                            <input type="radio" name="genero" value="M" checked>
+                            Masculino
+                        </label>
 
-                <label class="gender-option">
-                    <input type="radio" name="genero" value="M" checked>
-                    Masculino
-                </label>
+                        <label class="gender-option">
+                            <input type="radio" name="genero" value="F">
+                            Feminino
+                        </label>
 
-                <label class="gender-option">
-                    <input type="radio" name="genero" value="F">
-                    Feminino
-                </label>
+                        <label class="gender-option">
+                            <input type="radio" name="genero" value="O">
+                            Outro
+                        </label>
+                    </div>
 
-                <label class="gender-option">
-                    <input type="radio" name="genero" value="O">
-                    Outro
-                </label>
-            </div>
+                    <div class="text-field">
+                        <label>Senha</label>
+                        <input name="password" type="password" placeholder="*****" required>
+                        <img class="clear-icon" src="/icons/field-icon.svg" alt="">
+                    </div>
 
-            <div class="text-field">
-                <label>Senha</label>
-                <input name="password" type="password" placeholder="*****" required>
-                <img class="clear-icon" src="/icons/field-icon.svg" alt="">
-            </div>
+                    <button id="btnSeguinte" class="btn-next" type="button">Seguinte</button>
+                </div>
 
-            <button class="btn-next" type="submit">Próximo</button>
+                <div class="form-step" data-step="2" hidden>
+                    <div class="text-field">
+                        <label>CEP</label>
+                        <input name="cep" maxlength="8" placeholder="00000000" required disabled>
+                        <img class="clear-icon" src="/icons/field-icon.svg" alt="">
+                    </div>
 
-            <div class="message success" th:if="${success}" th:text="${success}"></div>
-            <div class="message error" th:if="${error}" th:text="${error}"></div>
-        </form>
+                    <div class="text-field">
+                        <label>Rua</label>
+                        <input name="rua" placeholder="Rua" required disabled>
+                        <img class="clear-icon" src="/icons/field-icon.svg" alt="">
+                    </div>
+
+                    <div class="text-field">
+                        <label>N&uacute;mero</label>
+                        <input name="numero" placeholder="N&uacute;mero" required disabled>
+                        <img class="clear-icon" src="/icons/field-icon.svg" alt="">
+                    </div>
+
+                    <div class="text-field">
+                        <label>Complemento</label>
+                        <input name="complemento" placeholder="Complemento" disabled>
+                        <img class="clear-icon" src="/icons/field-icon.svg" alt="">
+                    </div>
+
+                    <div class="text-field">
+                        <label>Bairro</label>
+                        <input name="bairro" placeholder="Bairro" required disabled>
+                        <img class="clear-icon" src="/icons/field-icon.svg" alt="">
+                    </div>
+
+                    <div class="text-field">
+                        <label>Cidade</label>
+                        <input name="cidade" placeholder="Cidade" required disabled>
+                        <img class="clear-icon" src="/icons/field-icon.svg" alt="">
+                    </div>
+
+                    <div class="text-field">
+                        <label>Estado</label>
+                        <input name="uf" maxlength="2" placeholder="UF" required disabled>
+                        <img class="clear-icon" src="/icons/field-icon.svg" alt="">
+                    </div>
+
+                    <button id="btnVoltar" class="btn-back" type="button">Voltar</button>
+                    <button class="btn-finish" type="submit">Finalizar Cadastro</button>
+                </div>
+
+                <div class="message success" th:if="${success}" th:text="${success}"></div>
+                <div class="message error" th:if="${error}" th:text="${error}"></div>
+            </form>
+        </article>
     </section>
-</main>
 
+    <script>
+        const cadastroForm = document.getElementById("cadastroForm");
+        const primeiraEtapa = cadastroForm.querySelector('[data-step="1"]');
+        const segundaEtapa = cadastroForm.querySelector('[data-step="2"]');
+        const camposEndereco = segundaEtapa.querySelectorAll("input");
+        const btnSeguinte = document.getElementById("btnSeguinte");
+        const btnVoltar = document.getElementById("btnVoltar");
+
+        function mostrarPrimeiraEtapa() {
+            primeiraEtapa.hidden = false;
+            segundaEtapa.hidden = true;
+            camposEndereco.forEach((campo) => {
+                campo.disabled = true;
+            });
+        }
+
+        function mostrarSegundaEtapa() {
+            camposEndereco.forEach((campo) => {
+                campo.disabled = false;
+            });
+            primeiraEtapa.hidden = true;
+            segundaEtapa.hidden = false;
+        }
+
+        btnSeguinte.addEventListener("click", () => {
+            if (cadastroForm.reportValidity()) {
+                mostrarSegundaEtapa();
+            }
+        });
+
+        btnVoltar.addEventListener("click", mostrarPrimeiraEtapa);
+
+        cadastroForm.addEventListener("submit", (event) => {
+            if (segundaEtapa.hidden) {
+                event.preventDefault();
+                if (cadastroForm.reportValidity()) {
+                    mostrarSegundaEtapa();
+                }
+            }
+        });
+    </script>
+</div>
 </body>
 </html>

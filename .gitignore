@@ -35,3 +35,6 @@ build/
 
 ### ENVIRONMENT PROPERTIES ###
 application-local.yml
+
+### LOCAL UPLOADS ###
+uploads/

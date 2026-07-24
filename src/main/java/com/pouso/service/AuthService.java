@@ -4,6 +4,7 @@ import com.pouso.dto.CadastroRequest;
 import com.pouso.model.Person;
 import com.pouso.repository.PersonRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
@@ -14,6 +15,7 @@ public class AuthService {
         this.personRepository = personRepository;
     }
 
+    @Transactional
     public Person cadastrar(CadastroRequest request) {
         validarCadastro(request);
 
@@ -37,6 +39,17 @@ public class AuthService {
             request.getUsername(),
             request.getTelefone(),
             request.getGenero()
+        );
+
+        personRepository.inserirEndereco(
+            request.getCpf(),
+            request.getCep(),
+            request.getRua(),
+            request.getNumero(),
+            request.getComplemento(),
+            request.getBairro(),
+            request.getCidade(),
+            request.getUf()
         );
 
         return new Person(

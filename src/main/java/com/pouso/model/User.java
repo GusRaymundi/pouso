@@ -13,6 +13,9 @@ public class User {
     private String telefone;
     private String fotoPerfil;
 
+    public User() {
+    }
+
     public User(String cpf, String nome, String email, String senha, String username, String bio, String genero, String telefone, String fotoPerfil) {
         this.cpf = cpf;
         this.nome = nome;

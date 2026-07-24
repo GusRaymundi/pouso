@@ -1,68 +1,75 @@
+.edit-user-page {
+    max-inline-size: 72rem;
+    margin-inline: auto;
+}
 
-        :root {
-            --primary: #6750A4; /* Roxo padrão do Material Design 3 */
-            --surface-container: #f7f2fa;
-        }
-        
-        body {
-            background-color: #fcf8fc;
-            margin: 0;
-            font-family: 'Roboto', sans-serif;
-        }
+.edit-user-page form {
+    inline-size: 100%;
+}
 
-        .main-layout {
-            display: flex;
-            height: calc(100vh - 64px); /* Desconta a altura do Header */
-        }
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
 
-        .content-container {
-            flex: 1;
-            padding: 32px;
-            overflow-y: auto;
-        }
+.profile-photo-circle {
+    inline-size: 11rem;
+    block-size: 11rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: var(--primary-container);
+    border: 1px solid var(--outline-variant);
+}
 
-        .profile-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 24px;
-        }
+.profile-photo-preview {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+}
 
-        .big-avatar {
-            width: 160px;
-            height: 160px;
-            border-radius: 50%;
-            background-color: #e8def8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 24px;
-        }
+.profile-photo-icon {
+    font-size: 6.5rem;
+    color: var(--primary);
+}
 
-        .big-avatar i {
-            font-size: 96px;
-            color: #4f378b;
-        }
+.profile-photo-actions {
+    display: flex;
+    justify-content: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+}
 
-        /* Grid customizado para os inputs alinharem como no Figma */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 16px;
-        }
-        .col-12 { grid-column: span 12; }
-        .col-6 { grid-column: span 6; }
-        
-        /* Ajuste para o botão interno de alterar senha */
-        .password-field {
-            position: relative;
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-        .password-field .btn-inside {
-            position: absolute;
-            right: 48px;
-            z-index: 2;
-        }
-    
+.photo-file-input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.gender-group {
+    min-block-size: 4.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.success-message {
+    background: #1b7f3a;
+    color: #fff;
+}
+
+.error-message {
+    background: #b3261e;
+    color: #fff;
+}
+
+@media (max-width: 720px) {
+    .edit-user-page {
+        max-inline-size: 100%;
+    }
+}
