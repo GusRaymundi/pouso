@@ -14,7 +14,31 @@
             const mode = window.matchMedia('(prefers-color-scheme: dark)');
             ui('mode', mode.matches ? 'dark' : 'light');
         });
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const icon = document.getElementById('sidebar-toggle-icon');
+            if (!sidebar) return;
+
+            sidebar.classList.toggle('max');
+            if (icon) {
+                icon.textContent = sidebar.classList.contains('max') ? 'menu_open' : 'menu';
+            }
+        }
     </script>
+    <style>
+        #sidebar:not(.max) span,
+        #sidebar:not(.max) a > div {
+            display: none !important;
+        }
+
+        #sidebar:not(.max) .sidebar-search-field {
+            width: 3rem;
+            min-width: 3rem;
+            padding-inline: 0;
+            justify-content: center;
+        }
+    </style>
 </head>
 <body class="primary surface-container">
     <nav th:replace="~{fragments/header :: header}" class="top"></nav>

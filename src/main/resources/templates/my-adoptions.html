@@ -32,15 +32,15 @@
     </div>
 
     <div id="tab-donor" class="page active">
-        <div th:replace="~{minhas-adocoes :: adoptionList(${asDonor}, 'Adotante', false)}"></div>
+        <div th:replace="~{my-adoptions :: adoptionList(${asDonor}, 'Adotante', false)}"></div>
     </div>
     <div id="tab-history" class="page">
-        <div th:replace="~{minhas-adocoes :: adoptionList(${history}, 'Pessoa relacionada', true)}"></div>
+        <div th:replace="~{my-adoptions :: adoptionList(${history}, 'Pessoa relacionada', true)}"></div>
     </div>
 
     <div id="tab-rejected" class="page">
         <div class="grid">
-            <div class="s12 l8">
+            <div class="s12">
                 <article th:if="${#lists.isEmpty(rejected)}" class="border round padding center-align"><i class="large">inbox</i><p>Nenhum pet rejeitado.</p></article>
                 <article th:each="pet : ${rejected}" class="border round padding margin-bottom surface-container-low">
                     <div class="row middle-align wrap">
@@ -59,14 +59,13 @@
                     </div>
                 </article>
             </div>
-            <div class="s12 l4"><article class="border round padding"><h6>Rejeicoes</h6><p class="small-text grey-text">Esta aba fica separada para voce consultar apenas quando quiser.</p></article></div>
         </div>
     </div>
 </div>
 
 <div th:fragment="adoptionList(adoptions, personLabel, history)">
     <div class="grid">
-        <div class="s12 l8">
+        <div class="s12">
             <article th:if="${#lists.isEmpty(adoptions)}" class="border round padding center-align"><i class="large">inbox</i><p>Nenhum registro nesta secao.</p></article>
             <article th:each="adoption : ${adoptions}" class="border round padding margin-bottom surface-container-low">
                 <div class="row middle-align wrap">
@@ -102,7 +101,6 @@
                 </dialog>
             </article>
         </div>
-        <div class="s12 l4"><article class="border round padding"><h6>Resumo da secao</h6><p class="small-text grey-text" th:text="${#lists.size(adoptions)} + ' registro(s) encontrados.'">0 registros</p><p class="small-text grey-text">Tela somente leitura nesta etapa.</p></article></div>
     </div>
 </div>
 </body>

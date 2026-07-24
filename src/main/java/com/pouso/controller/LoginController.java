@@ -50,4 +50,10 @@ public class LoginController {
         model.addAttribute("error", "Email ou senha inválidos");
         return "login";
     }
+
+    @PostMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/home";
+    }
 }

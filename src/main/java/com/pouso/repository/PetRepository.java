@@ -277,6 +277,40 @@ public class PetRepository {
             rs.getString("foto_pet")
         ), cpf);
     }
+public List<PetSolicitacao> listarAprovadosPorDono(String cpfDono) {
+    String sql = """
+            SELECT pt.nome, pt.cpf_dono, dono.nome AS dono_nome,
+                   especie.nome AS especie_nome, raca.nome AS raca_nome,
+                   pt.sexo, pt.porte, pt.bio, pt.is_castrado, pt.is_permanente,
+                   pt.data_nasc, pt.data_cadastro, pt.foto_pet,
+                   pt.status_aprovacao, adm.nome AS admin_nome
+            FROM pet pt
+            INNER JOIN pessoa dono ON dono.cpf = pt.cpf_dono
+            INNER JOIN tipo_pet raca ON raca.id = pt.tipo_pet
+            LEFT JOIN tipo_pet especie ON especie.id = raca.tipo_mae
+            LEFT JOIN pessoa adm ON adm.cpf = pt.adm_aprovou
+            WHERE pt.status_aprovacao = 'APROVADO' AND pt.cpf_dono = ?
+            ORDER BY pt.data_cadastro DESC
+        """;
+
+    return jdbc.query(sql, (rs, rowNum) -> new PetSolicitacao(
+        rs.getString("nome"),
+        rs.getString("cpf_dono"),
+        rs.getString("dono_nome"),
+        rs.getString("especie_nome"),
+        rs.getString("raca_nome"),
+        rs.getString("sexo"),
+        rs.getString("porte"),
+        rs.getString("bio"),
+        (Boolean) rs.getObject("is_castrado"),
+        (Boolean) rs.getObject("is_permanente"),
+        rs.getObject("data_nasc", LocalDate.class),
+        rs.getObject("data_cadastro", LocalDate.class),
+        rs.getString("status_aprovacao"),
+        rs.getString("admin_nome"),
+        rs.getString("foto_pet")
+    ), cpfDono);
+}
 
     public void aprovar(String nomePet, String cpfDono, String cpfAdmin) {
         String sql = """

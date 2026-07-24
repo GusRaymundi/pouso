@@ -35,7 +35,7 @@ public class PetController {
 
         model.addAttribute("myPets", petRepository.listByOwner(cpf));
         model.addAttribute("adopting", adoptionRepository.listActiveAsAdopter(cpf));
-        return "meus-pets";
+        return "my-pets";
     }
 
     @GetMapping("/cadastrar")
