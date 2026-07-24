@@ -82,7 +82,7 @@ public class SuperUserController {
 
         String nivel = usuarioRepository.buscarNivelAdmin(cpf);
         if (!"S".equals(nivel)) {
-            return "redirect:/home";
+            return "redirect:/";
         }
 
         if (size != 10 && size != 20 && size != 50) {

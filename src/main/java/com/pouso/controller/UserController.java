@@ -68,7 +68,7 @@ public class UserController {
         User usuario = userRepository.buscarPorCpf(cpf);
 
         if (usuario == null) {
-            return "redirect:/home";
+            return "redirect:/";
         }
 
         usuario.setNome(nome);

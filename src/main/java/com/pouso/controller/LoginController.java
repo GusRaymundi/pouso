@@ -44,7 +44,7 @@ public class LoginController {
                 return "redirect:/sudo/users";
             }
 
-            return "redirect:/home";
+            return "redirect:/";
         }
 
         model.addAttribute("error", "Email ou senha inválidos");
@@ -54,6 +54,6 @@ public class LoginController {
     @PostMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/home";
+        return "redirect:/";
     }
 }
