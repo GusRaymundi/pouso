@@ -1,23 +1,28 @@
-.user-profile-panel {
+.pet-photo-panel {
     position: sticky;
     top: 6rem;
 }
 
-.user-avatar {
+.pet-avatar {
     width: 9rem;
     height: 9rem;
     margin-inline: auto;
+    margin-bottom: 1.5rem;
     overflow: hidden;
 }
 
-.user-avatar img {
+.pet-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
+#medicamentosField[hidden] {
+    display: none;
+}
+
 @media (max-width: 37.5rem) {
-    .user-profile-panel {
+    .pet-photo-panel {
         position: static;
     }
 }

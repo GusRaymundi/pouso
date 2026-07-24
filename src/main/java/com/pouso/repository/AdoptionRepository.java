@@ -31,10 +31,10 @@ public class AdoptionRepository {
 
     public List<AdoptionSummary> listHistory(String cpf) {
         return list("""
-                WHERE a.pet_dono = ?
+                WHERE (a.pet_dono = ? OR a.cpf_adotante = ?)
                   AND (a.status IN ('CONCLUIDA', 'CANCELADA') OR a.data_fim IS NOT NULL)
                 ORDER BY COALESCE(a.data_fim, a.data_inicio) DESC
-            """, cpf);
+            """, cpf, cpf);
     }
 
     private List<AdoptionSummary> list(String where, Object... params) {

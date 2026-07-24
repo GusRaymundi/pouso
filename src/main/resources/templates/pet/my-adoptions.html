@@ -1,7 +1,7 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{default}">
+      layout:decorate="~{layouts/app}">
 <head>
     <title>Adoções</title>
     <style>
@@ -32,10 +32,10 @@
     </div>
 
     <div id="tab-donor" class="page active">
-        <div th:replace="~{my-adoptions :: adoptionList(${asDonor}, 'Adotante', false)}"></div>
+        <div th:replace="~{pet/my-adoptions :: adoptionList(${asDonor}, 'Adotante', false)}"></div>
     </div>
     <div id="tab-history" class="page">
-        <div th:replace="~{my-adoptions :: adoptionList(${history}, 'Pessoa relacionada', true)}"></div>
+        <div th:replace="~{pet/my-adoptions :: adoptionList(${history}, 'Pessoa relacionada', true)}"></div>
     </div>
 
     <div id="tab-rejected" class="page">

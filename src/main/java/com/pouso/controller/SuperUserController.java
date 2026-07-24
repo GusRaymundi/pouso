@@ -41,7 +41,7 @@ public class SuperUserController {
 
         String nivel = usuarioRepository.buscarNivelAdmin(cpf);
         if (!"S".equals(nivel)) {
-            return "redirect:/home";
+            return "redirect:/";
         }
 
         if (size != 10 && size != 20 && size != 50) {
@@ -62,7 +62,7 @@ public class SuperUserController {
         model.addAttribute("currentSortDir", sortDir);
         model.addAttribute("currentSize", size);
 
-        return "superUser";
+        return "admin/users";
     }
 
     @GetMapping("/sudo/pets")
@@ -82,7 +82,7 @@ public class SuperUserController {
 
         String nivel = usuarioRepository.buscarNivelAdmin(cpf);
         if (!"S".equals(nivel)) {
-            return "redirect:/home";
+            return "redirect:/";
         }
 
         if (size != 10 && size != 20 && size != 50) {
@@ -103,6 +103,6 @@ public class SuperUserController {
         model.addAttribute("currentSortDir", sortDir);
         model.addAttribute("currentSize", size);
 
-        return "superUserPet";
+        return "admin/pets";
     }
 }

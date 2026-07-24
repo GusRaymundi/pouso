@@ -36,7 +36,7 @@ public class ModeradorController {
 
         model.addAttribute("isModerador", true);
         model.addAttribute("solicitacoes", petRepository.listarPendentes());
-        return "moderador-solicitacoes";
+        return "moderator/solicitacoes";
     }
 
     @PostMapping("/moderador/solicitacoes/aprovar")
@@ -71,6 +71,6 @@ public String historico(HttpSession session, Model model, RedirectAttributes red
 
     model.addAttribute("isModerador", true);
     model.addAttribute("historico", petRepository.listarHistorico());
-    return "moderador-historico";
+    return "moderator/historico";
 }
 }

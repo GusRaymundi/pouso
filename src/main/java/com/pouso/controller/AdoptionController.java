@@ -26,6 +26,6 @@ public class AdoptionController {
         model.addAttribute("asDonor", adoptionRepository.listActiveAsDonor(cpf));
         model.addAttribute("history", adoptionRepository.listHistory(cpf));
         model.addAttribute("rejected", petRepository.listRejectedByOwner(cpf));
-        return "my-adoptions";
+        return "pet/my-adoptions";
     }
 }

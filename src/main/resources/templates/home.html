@@ -1,22 +1,36 @@
 <!doctype html>
-<html
-    xmlns:th="http://www.thymeleaf.org"
-    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="~{default}"
->
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/app}">
+
     <head>
         <title>Início</title>
+            <link rel="stylesheet" th:href="@{/css/home.css}">
     </head>
     <body>
-        <div layout:fragment="content">
-            <article class="border center-align padding extra">
-                <i class="extra large primary-text">rocket_launch</i>
+        <div layout:fragment="content" >
+       <!-- <article class="border center-align padding extra">-->    
+        <section id="apresentacao">
+        <h1>O Pouso</h1>
 
-                <div class="space"></div>
+        <p>
+         O Pouso é uma plataforma web solidária que conecta pessoas dispostas a oferecer um lar temporário (ou definitivo) a pets que precisam de acolhimento. Conectamos pets que precisam de um lar a pessoas dispostas a acolher, por um tempo ou para sempre. Quem tem um animal que precisa de abrigo o disponibiliza na plataforma; quem pode oferecer um lar encontra esse pet, solicita a adoção e assume os cuidados pelo período combinado. Tudo de forma gratuita e solidária.
+        </p>
+    </section>
 
-                <h4>Tá bombando!</h4>
-                <p>Deu tudo certo. Bó codar!</p>
-            </article>
+    <section id="como-funciona">
+        <img src="img/pouso-icon.png" alt="Logo do pouso">
+
+        <ol>
+            <li>Encontre um pet — Busque por localização, espécie, porte ou idade e conheça os animais que precisam de um lar.</li>
+            <li>Solicite a adoção — Escolha entre acolhimento temporário ou definitivo e envie sua solicitação ao doador. </li>
+            <li>Combine e acolha — Com a solicitação aceita, vocês combinam a entrega e o período de cuidado começa. </li>
+            <li>Avalie a experiência — Ao final, doador e adotante se avaliam, fortalecendo a confiança da comunidade.</li>
+        </ol>
+    </section>
+
         </div>
-    </body>
+    </section>
+</body>
 </html>
