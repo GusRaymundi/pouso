@@ -224,4 +224,160 @@ public class PetRepository {
             """;
         jdbc.update(sql, cpfAdmin, nomePet, cpfDono);
     }
+
+
+
+
+       public List<Pet> buscarPets(
+            Boolean isPermanente,
+            String cidade,
+            String bairro,
+            int pagina,
+            int tamanhoPagina
+    ) {
+System.out.println("\n\n\n\n\n\n\n\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAENTROU NA BUSCA DE PETS repository");
+        int offset = (pagina - 1) * tamanhoPagina;
+
+        String sql = """
+            SELECT
+                p.nome,
+                p.cpf_dono,
+                p.bio,
+                p.sexo,
+                p.tipo_pet,
+                p.data_nasc,
+                p.data_cadastro,
+                p.porte,
+                p.is_permanente,
+                p.is_castrado,
+                p.adm_aprovou,
+                p.foto_pet
+
+            FROM pet p
+
+            INNER JOIN endereco e
+                ON p.cpf_dono = e.usuario_cpf
+
+            WHERE p.status_aprovacao = 'APROVADO'
+
+         AND (?::boolean IS NULL OR p.is_permanente = ?)
+
+AND (?::varchar IS NULL OR e.cidade = ?)
+
+AND (?::varchar IS NULL OR e.bairro = ?)
+
+            ORDER BY p.data_cadastro DESC
+
+            LIMIT ? OFFSET ?
+            """;
+
+        return jdbc.query(
+
+                sql,
+
+                (rs, rowNum) -> new Pet(
+
+                        rs.getString("nome"),
+                        rs.getString("cpf_dono"),
+                        rs.getString("bio"),
+                        rs.getString("sexo"),
+                        rs.getInt("tipo_pet"),
+                        rs.getDate("data_nasc") == null
+                                ? null
+                                : rs.getDate("data_nasc").toLocalDate(),
+                        rs.getDate("data_cadastro") == null
+                                ? null
+                                : rs.getDate("data_cadastro").toLocalDate(),
+                        rs.getString("porte"),
+                        rs.getBoolean("is_permanente"),
+                        rs.getBoolean("is_castrado"),
+                        rs.getString("adm_aprovou"),
+                        rs.getString("foto_pet")
+                ),
+
+                isPermanente,
+                isPermanente,
+
+                cidade,
+                cidade,
+
+                bairro,
+                bairro,
+
+                tamanhoPagina,
+                offset
+        );
+    }
+
+   public int contarPets(
+        Boolean isPermanente,
+        String cidade,
+        String bairro
+) {
+
+    String sql = """
+        SELECT COUNT(*)
+
+        FROM pet p
+
+        INNER JOIN endereco e
+            ON p.cpf_dono = e.usuario_cpf
+
+        WHERE p.status_aprovacao = 'APROVADO'
+
+        AND (?::boolean IS NULL OR p.is_permanente = ?)
+
+        AND (?::varchar IS NULL OR e.cidade = ?)
+
+        AND (?::varchar IS NULL OR e.bairro = ?)
+        """;
+
+
+    Integer total = jdbc.queryForObject(
+            sql,
+            Integer.class,
+
+            isPermanente,
+            isPermanente,
+
+            cidade,
+            cidade,
+
+            bairro,
+            bairro
+    );
+
+
+    return total == null ? 0 : total;
+}
+
+
+
+    public List<String> listarCidades() {
+
+        String sql = """
+            SELECT DISTINCT cidade
+            FROM endereco
+            ORDER BY cidade
+            """;
+
+        return jdbc.query(
+                sql,
+                (rs, rowNum) -> rs.getString("cidade")
+        );
+    }
+
+    public List<String> listarBairros() {
+
+        String sql = """
+            SELECT DISTINCT bairro
+            FROM endereco
+            ORDER BY bairro
+            """;
+
+        return jdbc.query(
+                sql,
+                (rs, rowNum) -> rs.getString("bairro")
+        );
+    }
 }

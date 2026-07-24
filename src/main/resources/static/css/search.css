@@ -1,0 +1,48 @@
+h1{
+    font-size: 2.5rem;
+   
+}
+#conteudo{
+    padding-left: 3%;
+    padding-right: 4%;
+}
+#selects {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 45%;
+}
+
+#selects .field {
+    margin: 0;
+}
+#chips{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+   margin-top: 1%;
+     width: 45%;
+}
+
+#chips-line{
+    margin-top:0;
+ 
+}
+
+.info-basicas-pet{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pet-tipo-adocao{
+
+}
+
+.pet-nome{
+font-size: 1.3rem;
+}
+
+.pet-sexo{
+
+}

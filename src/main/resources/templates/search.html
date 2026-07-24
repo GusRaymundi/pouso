@@ -1,0 +1,214 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+
+<head>
+    <title>Buscar Pets</title>
+      <link rel="stylesheet" th:href="@{/css/search.css}">
+</head>
+
+
+<body>
+
+<div layout:fragment="content">
+<main id="conteudo">
+    <h1>Buscar Pets</h1>
+
+<form th:action="@{/pets/search}" method="get">
+   
+<div id="selects">
+
+<div class="field label suffix border">
+        <select name="cidade">
+            <option value="">
+                Todas
+            </option>
+            <option th:each="cidade : ${cidades}"
+                    th:value="${cidade}"
+                    th:text="${cidade}"
+                    th:selected="${cidade == cidadeSelecionada}">
+            </option>
+        </select>
+  <label>Cidade</label>
+  <i>arrow_drop_down</i>
+</div>
+
+
+<div class="field label suffix border">
+        <select name="bairro">
+            <option value="">
+                Todos
+            </option>
+            <option th:each="bairro : ${bairros}"
+                    th:value="${bairro}"
+                    th:text="${bairro}"
+                    th:selected="${bairro == bairroSelecionado}">
+            </option>
+        </select>
+ <label>Bairro</label>
+  <i>arrow_drop_down</i>
+</div>
+
+</div>
+
+<div id="chips">
+
+ <p>
+    Tipo de adoção:
+ </p>
+<div class="row gap" id="chips-line"> <!--beeer-->
+
+    <a th:href="@{/pets/search(
+            nome=${nomeSelecionado},
+            cidade=${cidadeSelecionada},
+            bairro=${bairroSelecionado}
+        )}">
+        <button type="button"
+                class="chip"
+                th:classappend="${tipoSelecionado == null ? 'primary' : ''}">
+            <span>
+                Todos
+            </span>
+        </button>
+    </a>
+
+    <a th:href="@{/pets/search(
+            isPermanente=true,
+            nome=${nomeSelecionado},
+            cidade=${cidadeSelecionada},
+            bairro=${bairroSelecionado}
+        )}">
+
+        <button type="button"
+                class="chip"
+                th:classappend="${tipoSelecionado == true ? 'primary' : ''}">
+            <span>
+                Permanente
+            </span>
+        </button>
+    </a>
+
+    <a th:href="@{/pets/search(
+            isPermanente=false,
+            nome=${nomeSelecionado},
+            cidade=${cidadeSelecionada},
+            bairro=${bairroSelecionado}
+        )}">
+        <button type="button"
+                class="chip"
+                th:classappend="${tipoSelecionado == false ? 'primary' : ''}">
+            <span>
+                Temporária
+            </span>
+        </button>
+    </a>
+    </div>
+
+</div>
+
+        <button type="submit">
+           <i>search</i>
+        </button>
+
+    </form>
+
+    <p id="qtd-pets">
+        Pets encontrados:
+        <span th:text="${#lists.size(pets)}">
+            0
+        </span>
+    </p>
+
+
+    <div th:if="${#lists.isEmpty(pets)}">
+
+        <p>
+            Nenhum pet encontrado.
+        </p>
+
+    </div>
+
+
+    <div class="grid">
+
+
+        <div th:each="pet : ${pets}">
+
+
+            <div th:replace="~{fragments/card-pet :: petCard(${pet})}">
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+    <div class="row center-align gap margin-top">
+
+
+
+        <a th:if="${paginaAtual > 1}"
+           th:href="@{/pets/search(
+                pagina=${paginaAtual - 1},
+                isPermanente=${tipoSelecionado},
+                cidade=${cidadeSelecionada},
+                bairro=${bairroSelecionado}
+           )}">
+
+            Anterior
+
+        </a>
+
+
+
+
+        <span>
+
+            Página
+            <strong th:text="${paginaAtual}">
+                1
+            </strong>
+            de
+            <strong th:text="${totalPaginas}">
+                1
+            </strong>
+
+        </span>
+
+
+
+
+        <!-- PRÓXIMA -->
+
+
+        <a th:if="${paginaAtual < totalPaginas}"
+           th:href="@{/pets/search(
+                pagina=${paginaAtual + 1},
+                isPermanente=${tipoSelecionado},
+                cidade=${cidadeSelecionada},
+                bairro=${bairroSelecionado}
+           )}">
+
+            Próxima
+
+        </a>
+
+
+
+</main>
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

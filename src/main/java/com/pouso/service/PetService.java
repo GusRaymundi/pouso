@@ -116,4 +116,29 @@ public class PetService {
 
         return new PetOwnerListDTO(owners, page, size, total);
     }
+
+
+
+    private static final int TAMANHO_PAGINA = 12;
+    public List<Pet> buscarPets( Boolean isPermanente,String cidade,String bairro,int pagina) {
+        return petRepository.buscarPets(isPermanente,cidade,bairro,pagina,TAMANHO_PAGINA);
+    }
+
+
+    public int calcularTotalPaginas(Boolean isPermanente,String cidade,String bairro) {
+        int totalPets = petRepository.contarPets(isPermanente,cidade,bairro );
+        return (int) Math.ceil(
+                (double) totalPets / TAMANHO_PAGINA
+        );
+    }
+
+
+    public List<String> listarCidades() {
+        return petRepository.listarCidades();
+    }
+
+
+    public List<String> listarBairros() {
+        return petRepository.listarBairros();
+    }
 }
