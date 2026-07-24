@@ -1,0 +1,36 @@
+
+#conteudo{
+    padding-left: 3%;
+    padding-right: 4%;
+
+}
+#apresentacao h1{
+ font-size: 3rem;
+}
+
+#apresentacao p{
+       font-size: 1.1rem;
+       line-height: 1.8;
+
+}
+
+#como-funciona {
+    margin-top: 5%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items:center;
+}
+
+#como-funciona img {
+    width: 30%;
+}
+
+#como-funciona ol {
+    width: 50%;
+}
+
+#como-funciona li {
+    font-size: 1.1rem;
+    margin-bottom: 4%;
+}
