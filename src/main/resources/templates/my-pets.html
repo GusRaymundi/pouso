@@ -1,0 +1,96 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<head>
+    <title>Pets</title>
+    <style>
+        .pet-foto { width: 112px; height: 112px; object-fit: cover; }
+        .pet-placeholder { width: 112px; height: 112px; }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="row middle-align wrap margin-bottom">
+        <div class="max">
+            <h4>Pets</h4>
+            <p class="small-text grey-text">Veja seus pets cadastrados e os pets que voce esta adotando.</p>
+        </div>
+        <a th:href="@{/pets/cadastrar}" class="button round"><i>add</i><span>Cadastrar pet</span></a>
+    </div>
+
+    <div class="grid margin-bottom">
+        <div class="s12 m6">
+            <article class="border round padding primary-container">
+                <p class="small-text">Meus pets</p>
+                <h4 th:text="${#lists.size(myPets)}">0</h4>
+            </article>
+        </div>
+        <div class="s12 m6">
+            <article class="border round padding secondary-container">
+                <p class="small-text">Estou adotando</p>
+                <h4 th:text="${#lists.size(adopting)}">0</h4>
+            </article>
+        </div>
+    </div>
+
+    <div class="tabs margin-bottom">
+        <a class="active" data-ui="#tab-my-pets">Meus pets</a>
+        <a data-ui="#tab-adopting">Estou adotando</a>
+    </div>
+
+    <div id="tab-my-pets" class="page active">
+        <article th:if="${#lists.isEmpty(myPets)}" class="border round padding center-align">
+            <i class="large">inbox</i>
+            <p>Nenhum pet cadastrado.</p>
+        </article>
+        <article th:each="pet : ${myPets}" class="border round padding margin-bottom surface-container-low">
+            <div class="row middle-align wrap">
+                <img th:if="${pet.fotoPet != null}" th:src="${pet.fotoPet}" class="pet-foto round" alt="Foto do pet">
+                <div th:unless="${pet.fotoPet != null}" class="pet-placeholder round primary-container center-align middle-align"><i class="large">pets</i></div>
+                <div class="max padding">
+                    <div class="row middle-align wrap">
+                        <h6 class="max" th:text="${pet.nome}">Pet</h6>
+                        <span class="chip border" th:text="${pet.statusAprovacao}">Status</span>
+                    </div>
+                    <p class="small-text grey-text" th:text="${pet.especieNome} + ' • ' + ${pet.racaNome} + ' • ' + ${pet.idadeDescricao} + ' • ' + ${pet.porteDescricao}">Dados</p>
+                    <div class="row wrap small-space margin-top">
+                        <span class="chip border small" th:text="${pet.sexoDescricao}">Sexo</span>
+                        <span class="chip border small" th:text="${pet.isCastrado ? 'Castrado' : 'Nao castrado'}">Castracao</span>
+                        <span class="chip border small" th:text="${pet.isPermanente ? 'Permanente' : 'Temporario'}">Tipo</span>
+                        <span class="chip border small" th:text="'Cadastro: ' + ${pet.dataCadastroFormatada}">Cadastro</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <div id="tab-adopting" class="page">
+        <article th:if="${#lists.isEmpty(adopting)}" class="border round padding center-align">
+            <i class="large">inbox</i>
+            <p>Voce nao esta adotando nenhum pet agora.</p>
+        </article>
+        <article th:each="adoption : ${adopting}" class="border round padding margin-bottom surface-container-low">
+            <div class="row middle-align wrap">
+                <img th:if="${adoption.petPhoto != null}" th:src="${adoption.petPhoto}" class="pet-foto round" alt="Foto do pet">
+                <div th:unless="${adoption.petPhoto != null}" class="pet-placeholder round primary-container center-align middle-align"><i class="large">pets</i></div>
+                <div class="max padding">
+                    <div class="row middle-align wrap">
+                        <h6 class="max" th:text="${adoption.petName}">Pet</h6>
+                        <span class="chip border" th:text="${adoption.statusDescription}">Status</span>
+                    </div>
+                    <p class="small-text grey-text" th:text="${adoption.speciesName} + ' • ' + ${adoption.breedName} + ' • ' + ${adoption.ageDescription} + ' • ' + ${adoption.sizeDescription}">Dados</p>
+                    <p class="small-text" th:text="'Dono: ' + ${adoption.ownerName}">Dono</p>
+                    <div class="row wrap small-space margin-top">
+                        <span class="chip border small" th:text="'Inicio: ' + ${adoption.formattedStartDate}">Inicio</span>
+                        <span class="chip border small" th:text="'Prazo: ' + ${adoption.deadlineDescription}">Prazo</span>
+                        <span class="chip border small" th:text="${adoption.typeDescription}">Tipo</span>
+                        <span th:if="${adoption.hasReturnRequest}" class="chip error small">Solicitacao de devolucao</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>
+</body>
+</html>

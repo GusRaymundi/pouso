@@ -1,6 +1,8 @@
 package com.pouso.controller;
 
 import com.pouso.model.PetCadastroForm;
+import com.pouso.repository.AdoptionRepository;
+import com.pouso.repository.PetRepository;
 import com.pouso.service.PetService;
 import com.pouso.service.PetValidationException;
 import jakarta.servlet.http.HttpSession;
@@ -17,9 +19,23 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class PetController {
 
     private final PetService petService;
+    private final PetRepository petRepository;
+    private final AdoptionRepository adoptionRepository;
 
-    public PetController(PetService petService) {
+    public PetController(PetService petService, PetRepository petRepository, AdoptionRepository adoptionRepository) {
         this.petService = petService;
+        this.petRepository = petRepository;
+        this.adoptionRepository = adoptionRepository;
+    }
+
+    @GetMapping
+    public String myPets(HttpSession session, Model model) {
+        String cpf = (String) session.getAttribute("cpf");
+        if (cpf == null) return "redirect:/login";
+
+        model.addAttribute("myPets", petRepository.listByOwner(cpf));
+        model.addAttribute("adopting", adoptionRepository.listActiveAsAdopter(cpf));
+        return "meus-pets";
     }
 
     @GetMapping("/cadastrar")
