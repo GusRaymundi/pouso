@@ -24,14 +24,14 @@ public class PetDetalheDTO {
     private final Boolean condicaoEspecial;
     private final String cidade;
     private final String bairro;
-    private final boolean adotado;
+    private final String adocaoAtualStatus;
 
     public PetDetalheDTO(String nome, String cpfDono, String donoNome, String donoUsername,
                           String especieNome, String racaNome, String sexo, String porte,
                           String bio, Boolean isCastrado, Boolean isPermanente,
                           LocalDate dataNasc, String fotoPet, String statusAprovacao,
                           Boolean usaMedicamento, Boolean condicaoEspecial,
-                          String cidade, String bairro, boolean adotado) {
+                          String cidade, String bairro, String adocaoAtualStatus) {
         this.nome = nome;
         this.cpfDono = cpfDono;
         this.donoNome = donoNome;
@@ -50,7 +50,7 @@ public class PetDetalheDTO {
         this.condicaoEspecial = condicaoEspecial;
         this.cidade = cidade;
         this.bairro = bairro;
-        this.adotado = adotado;
+        this.adocaoAtualStatus = adocaoAtualStatus;
     }
 
     public String getNome() { return nome; }
@@ -75,7 +75,7 @@ public class PetDetalheDTO {
     public boolean isAprovado() { return "APROVADO".equals(statusAprovacao); }
     public boolean isPendente() { return "PENDENTE".equals(statusAprovacao); }
     public boolean isRejeitado() { return "REJEITADO".equals(statusAprovacao); }
-    public boolean isDisponivel() { return isAprovado() && !adotado; }
+    public boolean isDisponivel() { return isAprovado() && adocaoAtualStatus == null; }
 
     public String getTitulo() {
         return especieNome != null ? especieNome : racaNome;
@@ -119,6 +119,12 @@ public class PetDetalheDTO {
         if (!isAprovado()) {
             return isPendente() ? "Aguardando moderação" : "Não aprovado";
         }
-        return adotado ? "Adotado" : "Disponível";
+        if ("PENDENTE".equals(adocaoAtualStatus)) {
+            return "Solicitação pendente";
+        }
+        if ("EM_ANDAMENTO".equals(adocaoAtualStatus)) {
+            return "Em processo de adoção";
+        }
+        return "Disponível";
     }
 }

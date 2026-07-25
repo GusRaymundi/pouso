@@ -613,11 +613,12 @@ AND (?::varchar IS NULL OR e.bairro = ?)
                        pt.data_nasc, pt.foto_pet, pt.status_aprovacao,
                        sp.usa_medicamento, sp.condicao_especial,
                        ende.cidade, ende.bairro,
-                       EXISTS (
-                           SELECT 1 FROM adocao a
+                       (
+                           SELECT a.status::text FROM adocao a
                            WHERE a.pet_nome = pt.nome AND a.pet_dono = pt.cpf_dono
-                             AND a.status IN ('PENDENTE', 'EM_ANDAMENTO', 'CONCLUIDA')
-                       ) AS adotado
+                             AND a.status IN ('PENDENTE', 'EM_ANDAMENTO')
+                           LIMIT 1
+                       ) AS adocao_atual_status
                 FROM pet pt
                 INNER JOIN pessoa dono ON dono.cpf = pt.cpf_dono
                 INNER JOIN usuario dono_u ON dono_u.cpf = pt.cpf_dono
@@ -647,7 +648,7 @@ AND (?::varchar IS NULL OR e.bairro = ?)
             (Boolean) rs.getObject("condicao_especial"),
             rs.getString("cidade"),
             rs.getString("bairro"),
-            rs.getBoolean("adotado")
+            rs.getString("adocao_atual_status")
         ), cpfDono, nome);
 
         return resultado.isEmpty() ? Optional.empty() : Optional.of(resultado.get(0));
