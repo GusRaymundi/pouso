@@ -62,6 +62,10 @@ public class AuthService {
             return null;
         }
 
+        if (personRepository.isUsuarioBanido(person.getCPF())) {
+            return null;
+        }
+
         if (!person.getPassword().equals(password)) {
             return null;
         }

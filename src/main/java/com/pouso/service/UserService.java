@@ -17,9 +17,13 @@ public class UserService {
     }
 
     public UserListDTO listPaged(int page, int size, String sortBy, String sortDir, String q) {
+        return listPaged(page, size, sortBy, sortDir, q, false);
+    }
+
+    public UserListDTO listPaged(int page, int size, String sortBy, String sortDir, String q, boolean onlyBanned) {
         int offset = page * size;
-        List<UserItem> content = usuarioRepository.listarPaginado(offset, size, sortBy, sortDir, q);
-        long total = usuarioRepository.contarTodos(q);
+        List<UserItem> content = usuarioRepository.listarPaginado(offset, size, sortBy, sortDir, q, onlyBanned);
+        long total = usuarioRepository.contarTodos(q, onlyBanned);
         return new UserListDTO(content, page, size, total);
     }
 }

@@ -23,19 +23,27 @@ public class UsuarioRepository {
     }
 
     public List<UserItem> listarPaginado(int offset, int limit, String sortBy, String sortDir, String q) {
+        return listarPaginado(offset, limit, sortBy, sortDir, q, false);
+    }
+
+    public List<UserItem> listarPaginado(int offset, int limit, String sortBy, String sortDir, String q, boolean onlyBanned) {
         String col = ALLOWED_SORT.contains(sortBy) ? sortBy : "nome";
         String dir = ALLOWED_DIR.contains(sortDir) ? sortDir.toUpperCase() : "ASC";
 
         boolean hasFilter = q != null && !q.isBlank();
+        String where = onlyBanned ? "WHERE u.is_banned = TRUE" : "";
+        if (hasFilter) {
+            where += onlyBanned ? " AND LOWER(u.username) LIKE LOWER(?)" : "WHERE LOWER(u.username) LIKE LOWER(?)";
+        }
 
         String sql = """
-                SELECT p.cpf, p.nome, p.email, u.username, u.foto_perfil, p.data_registro
+                SELECT p.cpf, p.nome, p.email, u.username, u.foto_perfil, p.data_registro, u.is_banned
                 FROM pessoa p
                 JOIN usuario u ON u.cpf = p.cpf
                 %s
                 ORDER BY %s %s
                 LIMIT ? OFFSET ?
-            """.formatted(hasFilter ? "WHERE LOWER(u.username) LIKE LOWER(?)" : "", col, dir);
+            """.formatted(where, col, dir);
 
         Object[] params;
         if (hasFilter) {
@@ -53,24 +61,43 @@ public class UsuarioRepository {
                 rs.getString("email"),
                 rs.getString("username"),
                 rs.getString("foto_perfil"),
-                dataRegistro
+                dataRegistro,
+                rs.getBoolean("is_banned")
             );
         }, params);
     }
 
     public long contarTodos(String q) {
+        return contarTodos(q, false);
+    }
+
+    public long contarTodos(String q, boolean onlyBanned) {
         boolean hasFilter = q != null && !q.isBlank();
+        String where = onlyBanned ? "WHERE u.is_banned = TRUE" : "";
+        if (hasFilter) {
+            where += onlyBanned ? " AND LOWER(u.username) LIKE LOWER(?)" : "WHERE LOWER(u.username) LIKE LOWER(?)";
+        }
 
         String sql = """
                 SELECT COUNT(*)
                 FROM pessoa p
                 JOIN usuario u ON u.cpf = p.cpf
                 %s
-            """.formatted(hasFilter ? "WHERE LOWER(u.username) LIKE LOWER(?)" : "");
+            """.formatted(where);
 
         Object[] params = hasFilter ? new Object[]{"%" + q + "%"} : new Object[]{};
         Long result = jdbc.queryForObject(sql, Long.class, params);
         return result != null ? result : 0;
+    }
+
+    public boolean isBanido(String cpf) {
+        String sql = "SELECT is_banned FROM usuario WHERE cpf = ?";
+        List<Boolean> resultados = jdbc.query(sql, (rs, rowNum) -> rs.getBoolean("is_banned"), cpf);
+        return !resultados.isEmpty() && Boolean.TRUE.equals(resultados.get(0));
+    }
+
+    public void setBanido(String cpf, boolean banned) {
+        jdbc.update("UPDATE usuario SET is_banned = ? WHERE cpf = ?", banned, cpf);
     }
 
     public String buscarNivelAdmin(String cpf) {

@@ -197,14 +197,27 @@
                                      th:text="${pet.tipoPetNome}">
                                     Tipo
                                 </div>
+
+                                <div class="row wrap top-margin">
+                                    <span class="chip small"
+                                          th:classappend="${pet.statusAprovacao == 'APROVADO'} ? ' green white-text' : (${pet.statusAprovacao == 'REJEITADO'} ? ' red white-text' : ' grey')"
+                                          th:text="${pet.statusAprovacao == 'APROVADO'} ? 'Aceito' : (${pet.statusAprovacao == 'REJEITADO'} ? 'Rejeitado' : 'Pendente')">
+                                        Pendente
+                                    </span>
+
+                                    <span class="chip red white-text small"
+                                          th:if="${pet.banned}">
+                                        <i>block</i>
+                                        <span>Banido</span>
+                                    </span>
+                                </div>
                             </div>
 
-                            <!-- Ajustar para a rota real de detalhes do pet. -->
                             <a class="button circle transparent small"
-                               th:href="@{/superuser/pets/{dono}/{nome}(
-                                   dono=${dono.cpf},
-                                   nome=${pet.nome}
-                               )}"
+                               th:href="@{/sudo/pets/{username}/{nome}(
+                                    username=${dono.username},
+                                    nome=${pet.nome}
+                                )}"
                                th:aria-label="|Ver detalhes de ${pet.nome}|">
                                 <i class="small">arrow_forward</i>
                             </a>

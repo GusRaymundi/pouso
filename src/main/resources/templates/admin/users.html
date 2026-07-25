@@ -24,6 +24,7 @@
                 <h3 class="no-margin">Gerenciar usuários</h3>
                 <p class="no-margin opacity">
                     Consulte os perfis cadastrados no sistema.
+                    <span th:if="${showBannedOnly}">Mostrando apenas banidos.</span>
                 </p>
             </div>
         </div>
@@ -148,6 +149,12 @@
                             Nome do usuário
                         </strong>
                     </h6>
+
+                    <span class="chip red white-text small top-margin"
+                          th:if="${usuario.banned}">
+                        <i>block</i>
+                        <span>Banido</span>
+                    </span>
                 </div>
 
                 <div class="s12 m6 l3">
@@ -176,9 +183,9 @@
 
                 <div class="s12 m6 l3 right-align">
                     <a class="button border round"
-                       th:href="@{/superuser/usuarios/{cpf}(
-                           cpf=${usuario.cpf}
-                       )}">
+                       th:href="@{/sudo/users/{username}(
+                             username=${usuario.username}
+                        )}">
                         <i>more_horiz</i>
                         <span>Ver detalhes</span>
                     </a>

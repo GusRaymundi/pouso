@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/admin}">
+
+<head>
+    <title>Detalhes do pet</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+
+    <header class="row wrap middle-align bottom-margin">
+        <a th:href="@{/sudo/pets}"
+           class="button circle transparent"
+           aria-label="Voltar">
+            <i>arrow_back</i>
+        </a>
+
+        <div class="max">
+            <h3 class="no-margin" th:text="${pet.nome}">Nome do pet</h3>
+            <p class="no-margin opacity" th:text="|Tutor: ${pet.donoNome}|">Tutor</p>
+        </div>
+    </header>
+
+    <article class="primary-container round padding bottom-margin"
+             th:if="${success}">
+        <p class="no-margin" th:text="${success}">Sucesso.</p>
+    </article>
+
+    <article class="error-container round large-padding bottom-margin">
+        <div class="row wrap middle-align">
+            <i class="large">admin_panel_settings</i>
+
+            <div class="max">
+                <h5 class="no-margin">Ação de sudo</h5>
+                <p class="no-margin">
+                    <span th:if="${pet.banned}">Este pet está banido.</span>
+                    <span th:unless="${pet.banned}">Banir remove o pet das buscas públicas.</span>
+                </p>
+            </div>
+
+            <form th:if="${!pet.banned}"
+                  th:action="@{/sudo/pets/{username}/{nome}/ban(username=${ownerUsername},nome=${pet.nome})}"
+                  method="post">
+                <button class="error round" type="submit">
+                    <i>block</i>
+                    <span>Banir pet</span>
+                </button>
+            </form>
+
+            <form th:if="${pet.banned}"
+                  th:action="@{/sudo/pets/{username}/{nome}/unban(username=${ownerUsername},nome=${pet.nome})}"
+                  method="post">
+                <button class="border round" type="submit">
+                    <i>check_circle</i>
+                    <span>Desbanir pet</span>
+                </button>
+            </form>
+        </div>
+    </article>
+
+    <div class="grid large-space">
+        <aside class="s12 m4">
+            <article class="surface-container round large-padding center-align">
+                <div class="primary-container round large-padding middle-align center-align">
+                    <img th:if="${pet.fotoPet != null && !pet.fotoPet.isBlank()}"
+                         th:src="${pet.fotoPet}"
+                         th:alt="|Foto de ${pet.nome}|">
+
+                    <i class="extra"
+                       th:unless="${pet.fotoPet != null && !pet.fotoPet.isBlank()}">
+                        pets
+                    </i>
+                </div>
+
+                <h5 th:text="${pet.nome}">Nome do pet</h5>
+
+                <div class="row wrap center-align">
+                    <span class="chip small"
+                          th:classappend="${pet.statusAprovacao == 'APROVADO'} ? ' green white-text' : (${pet.statusAprovacao == 'REJEITADO'} ? ' red white-text' : ' grey')"
+                          th:text="${pet.statusAprovacao == 'APROVADO'} ? 'Aceito' : (${pet.statusAprovacao == 'REJEITADO'} ? 'Rejeitado' : 'Pendente')">
+                        Pendente
+                    </span>
+
+                    <span class="chip red white-text small" th:if="${pet.banned}">
+                        <i>block</i>
+                        <span>Banido</span>
+                    </span>
+                </div>
+            </article>
+        </aside>
+
+        <div class="s12 m8">
+            <article class="surface-container round large-padding">
+                <h5>Dados do pet</h5>
+
+                <div class="grid">
+                    <p class="s12 m6"><strong>Espécie:</strong> <span th:text="${pet.especieNome ?: '-'}">-</span></p>
+                    <p class="s12 m6"><strong>Raça:</strong> <span th:text="${pet.racaNome ?: '-'}">-</span></p>
+                    <p class="s12 m6"><strong>Sexo:</strong> <span th:text="${pet.sexoDescricao}">-</span></p>
+                    <p class="s12 m6"><strong>Porte:</strong> <span th:text="${pet.porteDescricao}">-</span></p>
+                    <p class="s12 m6"><strong>Idade:</strong> <span th:text="${pet.idadeDescricao}">-</span></p>
+                    <p class="s12 m6"><strong>Cadastro:</strong> <span th:text="${pet.dataCadastroFormatada}">-</span></p>
+                </div>
+
+                <h6>Bio</h6>
+                <p th:text="${pet.bio != null && !pet.bio.isBlank() ? pet.bio : 'Bio não informada.'}">
+                    Bio não informada.
+                </p>
+            </article>
+        </div>
+    </div>
+
+</section>
+</body>
+</html>

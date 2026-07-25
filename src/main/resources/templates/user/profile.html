@@ -17,7 +17,7 @@
 <section layout:fragment="content">
 
     <header class="row wrap middle-align bottom-margin">
-        <a th:href="@{/home}"
+        <a th:href="${isSudoView == true} ? @{/sudo/users} : @{/}"
            class="button circle transparent"
            aria-label="Voltar">
             <i>arrow_back</i>
@@ -34,6 +34,16 @@
             <span>Editar perfil</span>
         </a>
     </header>
+
+    <article class="primary-container round padding bottom-margin"
+             th:if="${success}">
+        <p class="no-margin" th:text="${success}">Sucesso.</p>
+    </article>
+
+    <article class="error-container round padding bottom-margin"
+             th:if="${error}">
+        <p class="no-margin" th:text="${error}">Erro.</p>
+    </article>
 
     <div class="grid large-space">
 
@@ -111,6 +121,40 @@
                             Localização não informada
                         </span>
                     </span>
+                </div>
+            </article>
+
+            <article class="error-container round large-padding top-margin"
+                     th:if="${isSudoView == true}">
+                <div class="row wrap middle-align">
+                    <i class="large">admin_panel_settings</i>
+
+                    <div class="max">
+                        <h5 class="no-margin">Banir Usuário</h5>
+
+                        <p class="no-margin">
+                            <span th:if="${isBanned}">Esta conta está banida.</span>
+                            <span th:unless="${isBanned}">Banir bloqueia o login desta conta.</span>
+                        </p>
+                    </div>
+
+                    <form th:if="${!isBanned}"
+                          th:action="@{/sudo/users/{username}/ban(username=${profileUser.username})}"
+                          method="post">
+                        <button class="error round" type="submit">
+                            <i>block</i>
+                            <span>Banir usuário</span>
+                        </button>
+                    </form>
+
+                    <form th:if="${isBanned}"
+                          th:action="@{/sudo/users/{username}/unban(username=${profileUser.username})}"
+                          method="post">
+                        <button class="border round" type="submit">
+                            <i>check_circle</i>
+                            <span>Desbanir usuário</span>
+                        </button>
+                    </form>
                 </div>
             </article>
 
@@ -192,10 +236,11 @@
 
                         <a class="round border padding
                                   row wrap middle-align pet-card"
+                           th:if="${isSudoView != true}"
                            th:href="@{/pet/{username}/{nome}(
-                               username=${profileUser.username},
-                               nome=${pet.nome}
-                           )}">
+                                username=${profileUser.username},
+                                nome=${pet.nome}
+                            )}">
 
                             <div class="pet-photo round
                                         primary-container
@@ -247,6 +292,59 @@
                                    th:text="${pet.bio}">
                                     Sobre o pet.
                                 </p>
+                            </div>
+
+                            <i>chevron_right</i>
+                        </a>
+
+                        <a class="round border padding
+                                  row wrap middle-align pet-card"
+                           th:if="${isSudoView == true}"
+                            th:href="@{/sudo/pets/{username}/{nome}(
+                                 username=${profileUser.username},
+                                 nome=${pet.nome}
+                             )}">
+
+                            <div class="pet-photo round
+                                        primary-container
+                                        middle-align center-align">
+
+                                <img th:if="${pet.fotoPet != null
+                                            && !pet.fotoPet.isBlank()}"
+                                     th:src="${pet.fotoPet}"
+                                     th:alt="|Foto de ${pet.nome}|">
+
+                                <i class="extra"
+                                   th:unless="${pet.fotoPet != null
+                                               && !pet.fotoPet.isBlank()}">
+                                    pets
+                                </i>
+                            </div>
+
+                            <div class="max pet-details">
+                                <h6 class="no-margin pet-name"
+                                    th:text="${pet.nome}">
+                                    Nome do pet
+                                </h6>
+
+                                <p class="small-text opacity no-margin"
+                                   th:text="${pet.titulo}">
+                                    Espécie
+                                </p>
+
+                                <div class="row wrap top-margin">
+                                    <span class="chip small"
+                                          th:classappend="${pet.statusAprovacao == 'APROVADO'} ? ' green white-text' : (${pet.statusAprovacao == 'REJEITADO'} ? ' red white-text' : ' grey')"
+                                          th:text="${pet.statusAprovacao == 'APROVADO'} ? 'Aceito' : (${pet.statusAprovacao == 'REJEITADO'} ? 'Rejeitado' : 'Pendente')">
+                                        Pendente
+                                    </span>
+
+                                    <span class="chip red white-text small"
+                                          th:if="${pet.banned}">
+                                        <i>block</i>
+                                        <span>Banido</span>
+                                    </span>
+                                </div>
                             </div>
 
                             <i>chevron_right</i>

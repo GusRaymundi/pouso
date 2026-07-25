@@ -5,7 +5,8 @@ function getParams() {
         size: parseInt(p.get('size')) || 10,
         sortBy: p.get('sortBy') || 'nome',
         sortDir: p.get('sortDir') || 'asc',
-        q: p.get('q') || ''
+        q: p.get('q') || '',
+        banidos: p.get('banidos') || ''
     };
 }
 
@@ -16,6 +17,7 @@ function buildUrl(params) {
     if (params.size) u.searchParams.set('size', params.size);
     if (params.page !== undefined) u.searchParams.set('page', params.page);
     if (params.q) u.searchParams.set('q', params.q);
+    if (params.banidos) u.searchParams.set('banidos', params.banidos);
     return u.toString();
 }
 
