@@ -21,12 +21,24 @@ public class PetSolicitacao {
     private String statusAprovacao;
     private String adminNome;
     private String fotoPet;
+    private boolean banned;
 
     public PetSolicitacao(String nome, String cpfDono, String donoNome, String especieNome,
                            String racaNome, String sexo, String porte, String bio,
                            Boolean isCastrado, Boolean isPermanente,
                            LocalDate dataNasc, LocalDate dataCadastro,
-                           String statusAprovacao, String adminNome, String fotoPet) {
+                            String statusAprovacao, String adminNome, String fotoPet) {
+        this(nome, cpfDono, donoNome, especieNome, racaNome, sexo, porte, bio,
+            isCastrado, isPermanente, dataNasc, dataCadastro, statusAprovacao,
+            adminNome, fotoPet, false);
+    }
+
+    public PetSolicitacao(String nome, String cpfDono, String donoNome, String especieNome,
+                           String racaNome, String sexo, String porte, String bio,
+                           Boolean isCastrado, Boolean isPermanente,
+                           LocalDate dataNasc, LocalDate dataCadastro,
+                           String statusAprovacao, String adminNome, String fotoPet,
+                           boolean banned) {
         this.nome = nome;
         this.cpfDono = cpfDono;
         this.donoNome = donoNome;
@@ -42,6 +54,7 @@ public class PetSolicitacao {
         this.statusAprovacao = statusAprovacao == null ? "PENDENTE" : statusAprovacao;
         this.adminNome = adminNome;
         this.fotoPet = fotoPet;
+        this.banned = banned;
     }
 
     public String getNome() { return nome; }
@@ -59,6 +72,7 @@ public class PetSolicitacao {
     public String getStatusAprovacao() { return statusAprovacao; }
     public String getAdminNome() { return adminNome; }
     public String getFotoPet() { return fotoPet; }
+    public boolean isBanned() { return banned; }
 
     public boolean isAprovado() { return "APROVADO".equals(statusAprovacao); }
     public boolean isRejeitado() { return "REJEITADO".equals(statusAprovacao); }

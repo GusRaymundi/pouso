@@ -67,12 +67,12 @@ public class PetRepository {
         boolean hasFilter = q != null && !q.isBlank();
 
         String sql = """
-                SELECT p.cpf, p.nome, COUNT(pet.nome) AS pet_count
+                SELECT p.cpf, p.nome, u.username, COUNT(pet.nome) AS pet_count
                 FROM usuario u
                 JOIN pessoa p ON p.cpf = u.cpf
                 JOIN pet ON pet.cpf_dono = u.cpf
                 %s
-                GROUP BY p.cpf, p.nome
+                GROUP BY p.cpf, p.nome, u.username
                 ORDER BY %s
                 LIMIT ? OFFSET ?
                 """.formatted(
@@ -91,6 +91,7 @@ public class PetRepository {
             return new OwnerItem(
                     rs.getString("cpf"),
                     rs.getString("nome"),
+                    rs.getString("username"),
                     rs.getLong("pet_count")
             );
         }, params);
@@ -120,7 +121,8 @@ public class PetRepository {
         }
 
         StringBuilder sql = new StringBuilder("""
-                SELECT pet.nome, tp.nome AS tipo_pet_nome, pet.cpf_dono
+                SELECT pet.nome, tp.nome AS tipo_pet_nome, pet.cpf_dono,
+                       pet.status_aprovacao, pet.is_banned
                 FROM pet
                 LEFT JOIN tipo_pet tp ON tp.id = pet.tipo_pet
                 WHERE pet.cpf_dono IN (
@@ -134,9 +136,66 @@ public class PetRepository {
             return new PetItem(
                     rs.getString("nome"),
                     rs.getString("tipo_pet_nome"),
-                    rs.getString("cpf_dono")
+                    rs.getString("cpf_dono"),
+                    rs.getString("status_aprovacao"),
+                    rs.getBoolean("is_banned")
             );
         }, cpfs.toArray());
+    }
+
+    public List<OwnerItem> listarBanidosPorDono() {
+        String sql = """
+                SELECT p.cpf, p.nome, u.username, COUNT(pet.nome) AS pet_count
+                FROM usuario u
+                JOIN pessoa p ON p.cpf = u.cpf
+                JOIN pet ON pet.cpf_dono = u.cpf
+                WHERE pet.is_banned = TRUE
+                GROUP BY p.cpf, p.nome, u.username
+                ORDER BY p.nome ASC
+                """;
+
+        List<OwnerItem> owners = jdbc.query(sql, (rs, rowNum) -> new OwnerItem(
+                rs.getString("cpf"),
+                rs.getString("nome"),
+                rs.getString("username"),
+                rs.getLong("pet_count")
+        ));
+
+        if (owners.isEmpty()) {
+            return owners;
+        }
+
+        List<String> cpfs = owners.stream().map(OwnerItem::getCpf).toList();
+        List<PetItem> pets = buscarPetsBanidosPorCpfs(cpfs);
+        java.util.Map<String, List<PetItem>> petsByCpf = pets.stream()
+                .collect(java.util.stream.Collectors.groupingBy(PetItem::getCpfDono));
+
+        for (OwnerItem owner : owners) {
+            owner.setPets(petsByCpf.getOrDefault(owner.getCpf(), List.of()));
+        }
+
+        return owners;
+    }
+
+    private List<PetItem> buscarPetsBanidosPorCpfs(List<String> cpfs) {
+        String placeholders = cpfs.stream().map(c -> "?").collect(java.util.stream.Collectors.joining(","));
+        String sql = """
+                SELECT pet.nome, tp.nome AS tipo_pet_nome, pet.cpf_dono,
+                       pet.status_aprovacao, pet.is_banned
+                FROM pet
+                LEFT JOIN tipo_pet tp ON tp.id = pet.tipo_pet
+                WHERE pet.is_banned = TRUE
+                  AND pet.cpf_dono IN (%s)
+                ORDER BY pet.nome ASC
+                """.formatted(placeholders);
+
+        return jdbc.query(sql, (rs, rowNum) -> new PetItem(
+                rs.getString("nome"),
+                rs.getString("tipo_pet_nome"),
+                rs.getString("cpf_dono"),
+                rs.getString("status_aprovacao"),
+                rs.getBoolean("is_banned")
+        ), cpfs.toArray());
     }
 
     public List<PetSolicitacao> listByOwner(String cpf) {
@@ -145,7 +204,7 @@ public class PetRepository {
                        especie.nome AS especie_nome, raca.nome AS raca_nome,
                        pt.sexo, pt.porte, pt.bio, pt.is_castrado, pt.is_permanente,
                        pt.data_nasc, pt.data_cadastro, pt.foto_pet,
-                       pt.status_aprovacao, adm.nome AS admin_nome
+                       pt.status_aprovacao, adm.nome AS admin_nome, pt.is_banned
                 FROM pet pt
                 INNER JOIN pessoa dono ON dono.cpf = pt.cpf_dono
                 INNER JOIN tipo_pet raca ON raca.id = pt.tipo_pet
@@ -170,8 +229,82 @@ public class PetRepository {
             rs.getObject("data_cadastro", LocalDate.class),
             rs.getString("status_aprovacao"),
             rs.getString("admin_nome"),
-            rs.getString("foto_pet")
+            rs.getString("foto_pet"),
+            rs.getBoolean("is_banned")
         ), cpf);
+    }
+
+    public PetSolicitacao findByOwnerAndName(String cpfDono, String nome) {
+        String sql = """
+                SELECT pt.nome, pt.cpf_dono, dono.nome AS dono_nome,
+                       especie.nome AS especie_nome, raca.nome AS raca_nome,
+                       pt.sexo, pt.porte, pt.bio, pt.is_castrado, pt.is_permanente,
+                       pt.data_nasc, pt.data_cadastro, pt.foto_pet,
+                       pt.status_aprovacao, adm.nome AS admin_nome, pt.is_banned
+                FROM pet pt
+                INNER JOIN pessoa dono ON dono.cpf = pt.cpf_dono
+                INNER JOIN tipo_pet raca ON raca.id = pt.tipo_pet
+                LEFT JOIN tipo_pet especie ON especie.id = raca.tipo_mae
+                LEFT JOIN pessoa adm ON adm.cpf = pt.adm_aprovou
+                WHERE pt.cpf_dono = ? AND pt.nome = ?
+            """;
+
+        List<PetSolicitacao> pets = jdbc.query(sql, (rs, rowNum) -> new PetSolicitacao(
+            rs.getString("nome"),
+            rs.getString("cpf_dono"),
+            rs.getString("dono_nome"),
+            rs.getString("especie_nome"),
+            rs.getString("raca_nome"),
+            rs.getString("sexo"),
+            rs.getString("porte"),
+            rs.getString("bio"),
+            (Boolean) rs.getObject("is_castrado"),
+            (Boolean) rs.getObject("is_permanente"),
+            rs.getObject("data_nasc", LocalDate.class),
+            rs.getObject("data_cadastro", LocalDate.class),
+            rs.getString("status_aprovacao"),
+            rs.getString("admin_nome"),
+            rs.getString("foto_pet"),
+            rs.getBoolean("is_banned")
+        ), cpfDono, nome);
+        return pets.isEmpty() ? null : pets.get(0);
+    }
+
+    public PetSolicitacao findByOwnerUsernameAndName(String username, String nome) {
+        String sql = """
+                SELECT pt.nome, pt.cpf_dono, dono.nome AS dono_nome,
+                       especie.nome AS especie_nome, raca.nome AS raca_nome,
+                       pt.sexo, pt.porte, pt.bio, pt.is_castrado, pt.is_permanente,
+                       pt.data_nasc, pt.data_cadastro, pt.foto_pet,
+                       pt.status_aprovacao, adm.nome AS admin_nome, pt.is_banned
+                FROM pet pt
+                INNER JOIN usuario u ON u.cpf = pt.cpf_dono
+                INNER JOIN pessoa dono ON dono.cpf = pt.cpf_dono
+                INNER JOIN tipo_pet raca ON raca.id = pt.tipo_pet
+                LEFT JOIN tipo_pet especie ON especie.id = raca.tipo_mae
+                LEFT JOIN pessoa adm ON adm.cpf = pt.adm_aprovou
+                WHERE u.username = ? AND pt.nome = ?
+            """;
+
+        List<PetSolicitacao> pets = jdbc.query(sql, (rs, rowNum) -> new PetSolicitacao(
+            rs.getString("nome"),
+            rs.getString("cpf_dono"),
+            rs.getString("dono_nome"),
+            rs.getString("especie_nome"),
+            rs.getString("raca_nome"),
+            rs.getString("sexo"),
+            rs.getString("porte"),
+            rs.getString("bio"),
+            (Boolean) rs.getObject("is_castrado"),
+            (Boolean) rs.getObject("is_permanente"),
+            rs.getObject("data_nasc", LocalDate.class),
+            rs.getObject("data_cadastro", LocalDate.class),
+            rs.getString("status_aprovacao"),
+            rs.getString("admin_nome"),
+            rs.getString("foto_pet"),
+            rs.getBoolean("is_banned")
+        ), username, nome);
+        return pets.isEmpty() ? null : pets.get(0);
     }
 
     public List<PetSolicitacao> listarPendentes() {
@@ -289,7 +422,7 @@ public List<PetSolicitacao> listarAprovadosPorDono(String cpfDono) {
             INNER JOIN tipo_pet raca ON raca.id = pt.tipo_pet
             LEFT JOIN tipo_pet especie ON especie.id = raca.tipo_mae
             LEFT JOIN pessoa adm ON adm.cpf = pt.adm_aprovou
-            WHERE pt.status_aprovacao = 'APROVADO' AND pt.cpf_dono = ?
+            WHERE pt.status_aprovacao = 'APROVADO' AND pt.cpf_dono = ? AND pt.is_banned = FALSE
             ORDER BY pt.data_cadastro DESC
         """;
 
@@ -330,6 +463,19 @@ public List<PetSolicitacao> listarAprovadosPorDono(String cpfDono) {
         jdbc.update(sql, cpfAdmin, nomePet, cpfDono);
     }
 
+    public void setBanido(String nomePet, String cpfDono, boolean banned) {
+        jdbc.update("UPDATE pet SET is_banned = ? WHERE nome = ? AND cpf_dono = ?", banned, nomePet, cpfDono);
+    }
+
+    public void setBanidoByOwnerUsername(String nomePet, String username, boolean banned) {
+        jdbc.update("""
+                UPDATE pet
+                SET is_banned = ?
+                WHERE nome = ?
+                  AND cpf_dono = (SELECT cpf FROM usuario WHERE username = ?)
+            """, banned, nomePet, username);
+    }
+
 
 
 
@@ -362,7 +508,7 @@ public List<PetSolicitacao> listarAprovadosPorDono(String cpfDono) {
             INNER JOIN endereco e
                 ON p.cpf_dono = e.usuario_cpf
 
-            WHERE p.status_aprovacao = 'APROVADO'
+            WHERE p.status_aprovacao = 'APROVADO' AND p.is_banned = FALSE
 
          AND (?::boolean IS NULL OR p.is_permanente = ?)
 
@@ -427,7 +573,7 @@ AND (?::varchar IS NULL OR e.bairro = ?)
         INNER JOIN endereco e
             ON p.cpf_dono = e.usuario_cpf
 
-        WHERE p.status_aprovacao = 'APROVADO'
+        WHERE p.status_aprovacao = 'APROVADO' AND p.is_banned = FALSE
 
         AND (?::boolean IS NULL OR p.is_permanente = ?)
 

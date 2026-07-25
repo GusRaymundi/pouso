@@ -91,4 +91,10 @@ public class PersonRepository {
 
         return pessoas.get(0);
     }
+
+    public boolean isUsuarioBanido(String cpf) {
+        String sql = "SELECT is_banned FROM usuario WHERE cpf = ?";
+        List<Boolean> resultados = jdbc.query(sql, (rs, rowNum) -> rs.getBoolean("is_banned"), cpf);
+        return !resultados.isEmpty() && Boolean.TRUE.equals(resultados.get(0));
+    }
 }
