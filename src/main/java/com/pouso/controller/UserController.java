@@ -1,5 +1,6 @@
 package com.pouso.controller;
 
+import com.pouso.model.Endereco;
 import com.pouso.model.User;
 import com.pouso.repository.PetRepository;
 import com.pouso.repository.UserRepository;
@@ -44,6 +45,7 @@ public class UserController {
         }
 
         model.addAttribute("usuario", usuario);
+        model.addAttribute("endereco", userRepository.buscarEnderecoPorCpf(cpf));
 
         return "user/edit";
     }
@@ -56,6 +58,16 @@ public class UserController {
         @RequestParam(required = false) String bio,
         @RequestParam(required = false) String genero,
         @RequestParam(required = false) String telefone,
+        @RequestParam String cep,
+        @RequestParam String rua,
+        @RequestParam String numero,
+        @RequestParam(required = false) String complemento,
+        @RequestParam String bairro,
+        @RequestParam String cidade,
+        @RequestParam String uf,
+        @RequestParam(required = false) String currentPassword,
+        @RequestParam(required = false) String newPassword,
+        @RequestParam(required = false) String confirmPassword,
         HttpSession session,
         RedirectAttributes redirectAttributes
     ) {
@@ -78,7 +90,34 @@ public class UserController {
         usuario.setGenero(genero);
         usuario.setTelefone(telefone);
 
-        userRepository.atualizar(usuario);
+        if (senhaFoiPreenchida(currentPassword, newPassword, confirmPassword)) {
+            String erroSenha = validarAlteracaoSenha(
+                usuario,
+                currentPassword,
+                newPassword,
+                confirmPassword
+            );
+
+            if (erroSenha != null) {
+                redirectAttributes.addFlashAttribute("error", erroSenha);
+                return "redirect:/user";
+            }
+
+            usuario.setSenha(newPassword);
+        }
+
+        Endereco endereco = new Endereco(
+            cpf,
+            cep,
+            rua,
+            numero,
+            complemento,
+            bairro,
+            cidade,
+            uf
+        );
+
+        userRepository.atualizarComEndereco(usuario, endereco);
 
         redirectAttributes.addFlashAttribute(
             "success",
@@ -156,6 +195,11 @@ public class UserController {
             "location",
             userRepository.buscarLocalizacao(profileUser.getCpf())
         );
+
+        Endereco endereco = userRepository.buscarEnderecoPorCpf(profileUser.getCpf());
+        model.addAttribute("endereco", endereco);
+        model.addAttribute("enderecoCompleto", formatarEndereco(endereco));
+
         model.addAttribute(
             "pets",
             petRepository.listarAprovadosPorDono(profileUser.getCpf())
@@ -166,5 +210,82 @@ public class UserController {
         );
 
         return "user/profile";
+    }
+
+    private String formatarEndereco(Endereco endereco) {
+        if (endereco == null || isBlank(endereco.getRua())) {
+            return "Endere\u00e7o n\u00e3o informado.";
+        }
+
+        String linha = endereco.getRua();
+
+        if (!isBlank(endereco.getNumero())) {
+            linha += ", " + endereco.getNumero();
+        }
+
+        if (!isBlank(endereco.getComplemento())) {
+            linha += " - " + endereco.getComplemento();
+        }
+
+        if (!isBlank(endereco.getBairro())) {
+            linha += ", " + endereco.getBairro();
+        }
+
+        if (!isBlank(endereco.getCidade())) {
+            linha += ", " + endereco.getCidade();
+        }
+
+        if (!isBlank(endereco.getUf())) {
+            linha += "/" + endereco.getUf();
+        }
+
+        if (!isBlank(endereco.getCep())) {
+            linha += " - CEP " + endereco.getCep();
+        }
+
+        return linha;
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
+    private boolean senhaFoiPreenchida(
+        String currentPassword,
+        String newPassword,
+        String confirmPassword
+    ) {
+        return !isBlank(currentPassword) ||
+            !isBlank(newPassword) ||
+            !isBlank(confirmPassword);
+    }
+
+    private String validarAlteracaoSenha(
+        User usuario,
+        String currentPassword,
+        String newPassword,
+        String confirmPassword
+    ) {
+        if (isBlank(currentPassword)) {
+            return "Informe a senha atual para alterar sua senha.";
+        }
+
+        if (!currentPassword.equals(usuario.getSenha())) {
+            return "Senha atual incorreta.";
+        }
+
+        if (isBlank(newPassword)) {
+            return "Informe a nova senha.";
+        }
+
+        if (isBlank(confirmPassword)) {
+            return "Confirme a nova senha.";
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            return "A nova senha e a confirma\u00e7\u00e3o n\u00e3o conferem.";
+        }
+
+        return null;
     }
 }
