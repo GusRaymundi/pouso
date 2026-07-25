@@ -44,7 +44,10 @@
             <i class="large">inbox</i>
             <p>Nenhum pet cadastrado.</p>
         </article>
-        <article th:each="pet : ${myPets}" class="border round padding margin-bottom surface-container-low">
+        <a th:each="pet : ${myPets}"
+           class="border round padding margin-bottom surface-container-low"
+           style="display: block; text-decoration: none; color: inherit;"
+           th:href="@{/pets/{cpfDono}/{nome}(cpfDono=${pet.cpfDono}, nome=${pet.nome})}">
             <div class="row middle-align wrap">
                 <img th:if="${pet.fotoPet != null}" th:src="${pet.fotoPet}" class="pet-foto round" alt="Foto do pet">
                 <div th:unless="${pet.fotoPet != null}" class="pet-placeholder round primary-container center-align middle-align"><i class="large">pets</i></div>
@@ -62,7 +65,7 @@
                     </div>
                 </div>
             </div>
-        </article>
+        </a>
     </div>
 
     <div id="tab-adopting" class="page">

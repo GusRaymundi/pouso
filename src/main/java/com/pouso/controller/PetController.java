@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,13 +43,10 @@ public class PetController {
 
     @GetMapping("/cadastrar")
     public String cadastrarForm(HttpSession session, Model model) {
-        // TODO: checagem de login removida temporariamente para visualizar a
-        // tela antes de existir cadastro de usuário. Reativar (descomentar)
-        // quando houver login disponível para teste:
-        // String cpf = (String) session.getAttribute("cpf");
-        // if (cpf == null) {
-        //     return "redirect:/login";
-        // }
+        String cpf = (String) session.getAttribute("cpf");
+        if (cpf == null) {
+            return "redirect:/login";
+        }
 
         if (!model.containsAttribute("petForm")) {
             model.addAttribute("petForm", new PetCadastroForm());
@@ -140,5 +138,26 @@ public class PetController {
         model.addAttribute("bairroSelecionado", bairro);
 
         return "pet/search";
+    }
+
+    @GetMapping("/{cpfDono}/{nome}")
+    public String detalhe(
+        @PathVariable String cpfDono,
+        @PathVariable String nome,
+        HttpSession session,
+        Model model,
+        RedirectAttributes redirectAttributes
+    ) {
+        String sessionCpf = (String) session.getAttribute("cpf");
+
+        try {
+            var pet = petService.buscarDetalhe(cpfDono, nome, sessionCpf);
+            model.addAttribute("pet", pet);
+            model.addAttribute("isOwner", sessionCpf != null && sessionCpf.equals(cpfDono));
+            return "pet/perfil";
+        } catch (PetValidationException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/pets/search";
+        }
     }
 }

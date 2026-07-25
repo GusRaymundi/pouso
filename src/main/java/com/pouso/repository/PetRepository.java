@@ -5,11 +5,13 @@ import org.springframework.stereotype.Repository;
 
 import com.pouso.model.Pet;
 import com.pouso.model.PetSolicitacao;
+import com.pouso.dto.PetDetalheDTO;
 import com.pouso.dto.PetOwnerListDTO.OwnerItem;
 import com.pouso.dto.PetOwnerListDTO.PetItem;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.time.LocalDate;
 
@@ -456,6 +458,54 @@ AND (?::varchar IS NULL OR e.bairro = ?)
 }
 
 
+
+    public Optional<PetDetalheDTO> buscarDetalhe(String cpfDono, String nome) {
+        String sql = """
+                SELECT pt.nome, pt.cpf_dono, dono.nome AS dono_nome, dono_u.username AS dono_username,
+                       especie.nome AS especie_nome, raca.nome AS raca_nome,
+                       pt.sexo, pt.porte, pt.bio, pt.is_castrado, pt.is_permanente,
+                       pt.data_nasc, pt.foto_pet, pt.status_aprovacao,
+                       sp.usa_medicamento, sp.condicao_especial,
+                       ende.cidade, ende.bairro,
+                       EXISTS (
+                           SELECT 1 FROM adocao a
+                           WHERE a.pet_nome = pt.nome AND a.pet_dono = pt.cpf_dono
+                             AND a.status IN ('EM_ANDAMENTO', 'CONCLUIDA')
+                       ) AS adotado
+                FROM pet pt
+                INNER JOIN pessoa dono ON dono.cpf = pt.cpf_dono
+                INNER JOIN usuario dono_u ON dono_u.cpf = pt.cpf_dono
+                INNER JOIN tipo_pet raca ON raca.id = pt.tipo_pet
+                LEFT JOIN tipo_pet especie ON especie.id = raca.tipo_mae
+                LEFT JOIN saude_pet sp ON sp.pet_nome = pt.nome AND sp.pet_dono = pt.cpf_dono
+                LEFT JOIN endereco ende ON ende.usuario_cpf = pt.cpf_dono
+                WHERE pt.cpf_dono = ? AND pt.nome = ?
+            """;
+
+        List<PetDetalheDTO> resultado = jdbc.query(sql, (rs, rowNum) -> new PetDetalheDTO(
+            rs.getString("nome"),
+            rs.getString("cpf_dono"),
+            rs.getString("dono_nome"),
+            rs.getString("dono_username"),
+            rs.getString("especie_nome"),
+            rs.getString("raca_nome"),
+            rs.getString("sexo"),
+            rs.getString("porte"),
+            rs.getString("bio"),
+            (Boolean) rs.getObject("is_castrado"),
+            (Boolean) rs.getObject("is_permanente"),
+            rs.getObject("data_nasc", LocalDate.class),
+            rs.getString("foto_pet"),
+            rs.getString("status_aprovacao"),
+            (Boolean) rs.getObject("usa_medicamento"),
+            (Boolean) rs.getObject("condicao_especial"),
+            rs.getString("cidade"),
+            rs.getString("bairro"),
+            rs.getBoolean("adotado")
+        ), cpfDono, nome);
+
+        return resultado.isEmpty() ? Optional.empty() : Optional.of(resultado.get(0));
+    }
 
     public List<String> listarCidades() {
 

@@ -11,6 +11,7 @@ import com.pouso.model.SaudePet;
 import com.pouso.repository.PetRepository;
 import com.pouso.repository.SaudePetRepository;
 import com.pouso.repository.TipoPetRepository;
+import com.pouso.dto.PetDetalheDTO;
 import com.pouso.dto.PetOwnerListDTO;
 import com.pouso.dto.PetOwnerListDTO.OwnerItem;
 import com.pouso.dto.PetOwnerListDTO.PetItem;
@@ -138,5 +139,17 @@ public class PetService {
 
     public List<String> listarBairros() {
         return petRepository.listarBairros();
+    }
+
+    public PetDetalheDTO buscarDetalhe(String cpfDono, String nome, String sessionCpf) {
+        PetDetalheDTO pet = petRepository.buscarDetalhe(cpfDono, nome)
+            .orElseThrow(() -> new PetValidationException("Pet não encontrado"));
+
+        boolean isOwner = sessionCpf != null && sessionCpf.equals(cpfDono);
+        if (!isOwner && !pet.isAprovado()) {
+            throw new PetValidationException("Pet não encontrado");
+        }
+
+        return pet;
     }
 }

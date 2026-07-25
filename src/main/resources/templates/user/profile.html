@@ -192,8 +192,8 @@
 
                         <a class="round border padding
                                   row wrap middle-align pet-card"
-                           th:href="@{/pet/{username}/{nome}(
-                               username=${profileUser.username},
+                           th:href="@{/pets/{cpfDono}/{nome}(
+                               cpfDono=${pet.cpfDono},
                                nome=${pet.nome}
                            )}">
 
