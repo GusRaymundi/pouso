@@ -1,0 +1,2 @@
+ALTER TYPE status_enum ADD VALUE 'PENDENTE';
+ALTER TYPE status_enum ADD VALUE 'RECUSADA';

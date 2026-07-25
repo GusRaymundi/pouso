@@ -616,7 +616,7 @@ AND (?::varchar IS NULL OR e.bairro = ?)
                        EXISTS (
                            SELECT 1 FROM adocao a
                            WHERE a.pet_nome = pt.nome AND a.pet_dono = pt.cpf_dono
-                             AND a.status IN ('EM_ANDAMENTO', 'CONCLUIDA')
+                             AND a.status IN ('PENDENTE', 'EM_ANDAMENTO', 'CONCLUIDA')
                        ) AS adotado
                 FROM pet pt
                 INNER JOIN pessoa dono ON dono.cpf = pt.cpf_dono

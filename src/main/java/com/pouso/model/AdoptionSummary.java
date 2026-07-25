@@ -87,9 +87,11 @@ public class AdoptionSummary {
     public String getStatusDescription() {
         if (status == null) return "-";
         return switch (status) {
+            case "PENDENTE" -> "Aguardando decisao";
             case "EM_ANDAMENTO" -> "Em andamento";
             case "CONCLUIDA" -> "Concluida";
             case "CANCELADA" -> "Cancelada";
+            case "RECUSADA" -> "Recusada";
             default -> status;
         };
     }
