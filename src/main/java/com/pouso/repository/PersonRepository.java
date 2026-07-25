@@ -66,6 +66,33 @@ public class PersonRepository {
         jdbc.update(sql, cpf, username, telefone, genero);
     }
 
+    public void inserirEndereco(
+        String cpf,
+        String cep,
+        String rua,
+        String numero,
+        String complemento,
+        String bairro,
+        String cidade,
+        String uf
+    ) {
+        String sql = """
+                INSERT INTO endereco (
+                    usuario_cpf,
+                    cep,
+                    rua,
+                    numero,
+                    complemento,
+                    bairro,
+                    cidade,
+                    uf
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """;
+
+        jdbc.update(sql, cpf, cep, rua, numero, complemento, bairro, cidade, uf);
+    }
+
     public Person buscarPorEmail(String email) {
         String sql = """
                 SELECT cpf, nome, email, senha
@@ -90,5 +117,11 @@ public class PersonRepository {
         }
 
         return pessoas.get(0);
+    }
+
+    public boolean isUsuarioBanido(String cpf) {
+        String sql = "SELECT is_banned FROM usuario WHERE cpf = ?";
+        List<Boolean> resultados = jdbc.query(sql, (rs, rowNum) -> rs.getBoolean("is_banned"), cpf);
+        return !resultados.isEmpty() && Boolean.TRUE.equals(resultados.get(0));
     }
 }

@@ -34,14 +34,16 @@ public class UserListDTO {
         private final String username;
         private final String fotoPerfil;
         private final LocalDateTime dataRegistro;
+        private final boolean banned;
 
-        public UserItem(String cpf, String nome, String email, String username, String fotoPerfil, LocalDateTime dataRegistro) {
+        public UserItem(String cpf, String nome, String email, String username, String fotoPerfil, LocalDateTime dataRegistro, boolean banned) {
             this.cpf = cpf;
             this.nome = nome;
             this.email = email;
             this.username = username;
             this.fotoPerfil = fotoPerfil;
             this.dataRegistro = dataRegistro;
+            this.banned = banned;
         }
 
         public String getCpf() { return cpf; }
@@ -50,5 +52,6 @@ public class UserListDTO {
         public String getUsername() { return username; }
         public String getFotoPerfil() { return fotoPerfil; }
         public LocalDateTime getDataRegistro() { return dataRegistro; }
+        public boolean isBanned() { return banned; }
     }
 }
