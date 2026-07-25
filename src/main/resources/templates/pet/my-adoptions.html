@@ -14,24 +14,72 @@
     <div class="row middle-align wrap margin-bottom">
         <div class="max">
             <h4>Adoções</h4>
-            <p class="small-text grey-text">Acompanhe seus pets que estao sendo adotados por outras pessoas, historico e rejeicoes.</p>
+            <p class="small-text grey-text">Acompanhe suas solicitacoes, pets que estao sendo adotados por outras pessoas, historico e rejeicoes.</p>
         </div>
         <a th:href="@{/pets}" class="button border round"><i>pets</i><span>Ver pets</span></a>
     </div>
 
+    <article class="green white-text round padding margin-bottom" th:if="${success}">
+        <span th:text="${success}">Sucesso.</span>
+    </article>
+
+    <article class="error white-text round padding margin-bottom" th:if="${error}">
+        <span th:text="${error}">Erro.</span>
+    </article>
+
     <div class="grid margin-bottom">
-        <div class="s12 m4"><article class="border round padding primary-container"><p class="small-text">Sendo adotados</p><h4 th:text="${#lists.size(asDonor)}">0</h4></article></div>
-        <div class="s12 m4"><article class="border round padding secondary-container"><p class="small-text">Historico</p><h4 th:text="${#lists.size(history)}">0</h4></article></div>
-        <div class="s12 m4"><article class="border round padding error-container"><p class="small-text">Rejeitados</p><h4 th:text="${#lists.size(rejected)}">0</h4></article></div>
+        <div class="s12 m3"><article class="border round padding tertiary-container"><p class="small-text">Solicitacoes</p><h4 th:text="${#lists.size(solicitacoes)}">0</h4></article></div>
+        <div class="s12 m3"><article class="border round padding primary-container"><p class="small-text">Sendo adotados</p><h4 th:text="${#lists.size(asDonor)}">0</h4></article></div>
+        <div class="s12 m3"><article class="border round padding secondary-container"><p class="small-text">Historico</p><h4 th:text="${#lists.size(history)}">0</h4></article></div>
+        <div class="s12 m3"><article class="border round padding error-container"><p class="small-text">Rejeitados</p><h4 th:text="${#lists.size(rejected)}">0</h4></article></div>
     </div>
 
     <div class="tabs margin-bottom">
-        <a class="active" data-ui="#tab-donor">Sendo adotados</a>
+        <a class="active" data-ui="#tab-requests">Solicitações</a>
+        <a data-ui="#tab-donor">Sendo adotados</a>
         <a data-ui="#tab-history">Historico</a>
         <a data-ui="#tab-rejected">Rejeitados</a>
     </div>
 
-    <div id="tab-donor" class="page active">
+    <div id="tab-requests" class="page active">
+        <div class="grid">
+            <div class="s12">
+                <article th:if="${#lists.isEmpty(solicitacoes)}" class="border round padding center-align"><i class="large">inbox</i><p>Nenhuma solicitacao pendente.</p></article>
+                <article th:each="solicitacao : ${solicitacoes}" class="border round padding margin-bottom surface-container-low">
+                    <div class="row middle-align wrap">
+                        <img th:if="${solicitacao.petPhoto != null}" th:src="${solicitacao.petPhoto}" class="adoption-photo round" alt="Foto do pet">
+                        <div th:unless="${solicitacao.petPhoto != null}" class="adoption-placeholder round primary-container center-align middle-align"><i class="large">pets</i></div>
+                        <div class="max padding">
+                            <h6 class="max" th:text="${solicitacao.petName}">Pet</h6>
+                            <p class="small-text grey-text" th:text="'Solicitante: ' + ${solicitacao.adopterName}">Solicitante</p>
+                            <div class="row wrap small-space margin-top">
+                                <span class="chip border small" th:text="${solicitacao.typeDescription}">Tipo</span>
+                                <span class="chip border small" th:text="'Periodo: ' + ${solicitacao.deadlineDescription}">Periodo</span>
+                                <span class="chip border small" th:text="'Pedido em: ' + ${solicitacao.formattedRequestDate}">Pedido em</span>
+                            </div>
+                        </div>
+                        <div class="row gap">
+                            <form th:action="@{/adocoes/recusar}" method="post">
+                                <input type="hidden" name="dataInicio" th:value="${solicitacao.startDate}">
+                                <input type="hidden" name="cpfAdotante" th:value="${solicitacao.adopterCpf}">
+                                <input type="hidden" name="petNome" th:value="${solicitacao.petName}">
+                                <input type="hidden" name="petDono" th:value="${solicitacao.petOwner}">
+                                <button type="submit" class="circle error" title="Recusar"><i>close</i></button>
+                            </form>
+                            <form th:action="@{/adocoes/aceitar}" method="post">
+                                <input type="hidden" name="dataInicio" th:value="${solicitacao.startDate}">
+                                <input type="hidden" name="cpfAdotante" th:value="${solicitacao.adopterCpf}">
+                                <input type="hidden" name="petNome" th:value="${solicitacao.petName}">
+                                <input type="hidden" name="petDono" th:value="${solicitacao.petOwner}">
+                                <button type="submit" class="round green white-text"><i>check</i><span>Aceitar</span></button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+    <div id="tab-donor" class="page">
         <div th:replace="~{pet/my-adoptions :: adoptionList(${asDonor}, 'Adotante', false)}"></div>
     </div>
     <div id="tab-history" class="page">

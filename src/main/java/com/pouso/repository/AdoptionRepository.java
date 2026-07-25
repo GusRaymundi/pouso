@@ -32,9 +32,45 @@ public class AdoptionRepository {
     public List<AdoptionSummary> listHistory(String cpf) {
         return list("""
                 WHERE (a.pet_dono = ? OR a.cpf_adotante = ?)
-                  AND (a.status IN ('CONCLUIDA', 'CANCELADA') OR a.data_fim IS NOT NULL)
+                  AND (a.status IN ('CONCLUIDA', 'CANCELADA', 'RECUSADA') OR a.data_fim IS NOT NULL)
                 ORDER BY COALESCE(a.data_fim, a.data_inicio) DESC
             """, cpf, cpf);
+    }
+
+    public List<AdoptionSummary> listPendentesAsDonor(String cpf) {
+        return list("""
+                WHERE a.pet_dono = ?
+                  AND a.status = 'PENDENTE'
+                ORDER BY a.data_solicitacao DESC
+            """, cpf);
+    }
+
+    public void solicitar(String cpfAdotante, String petNome, String petDono, boolean permanente, LocalDate dataFim) {
+        String sql = """
+                INSERT INTO adocao (
+                    data_inicio, cpf_adotante, pet_nome, pet_dono,
+                    data_solicitacao, status, is_permanente, data_fim
+                ) VALUES (CURRENT_DATE, ?, ?, ?, CURRENT_DATE, 'PENDENTE', ?, ?)
+            """;
+        jdbc.update(sql, cpfAdotante, petNome, petDono, permanente, dataFim);
+    }
+
+    public void aceitar(LocalDate dataInicio, String cpfAdotante, String petNome, String petDono) {
+        String sql = """
+                UPDATE adocao SET status = 'EM_ANDAMENTO'
+                WHERE data_inicio = ? AND cpf_adotante = ? AND pet_nome = ? AND pet_dono = ?
+                  AND status = 'PENDENTE'
+            """;
+        jdbc.update(sql, dataInicio, cpfAdotante, petNome, petDono);
+    }
+
+    public void recusar(LocalDate dataInicio, String cpfAdotante, String petNome, String petDono) {
+        String sql = """
+                UPDATE adocao SET status = 'RECUSADA'
+                WHERE data_inicio = ? AND cpf_adotante = ? AND pet_nome = ? AND pet_dono = ?
+                  AND status = 'PENDENTE'
+            """;
+        jdbc.update(sql, dataInicio, cpfAdotante, petNome, petDono);
     }
 
     private List<AdoptionSummary> list(String where, Object... params) {

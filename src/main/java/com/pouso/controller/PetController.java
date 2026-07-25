@@ -3,9 +3,11 @@ package com.pouso.controller;
 import com.pouso.model.PetCadastroForm;
 import com.pouso.repository.AdoptionRepository;
 import com.pouso.repository.PetRepository;
+import com.pouso.service.AdoptionService;
 import com.pouso.service.PetService;
 import com.pouso.service.PetValidationException;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,11 +26,18 @@ public class PetController {
     private final PetService petService;
     private final PetRepository petRepository;
     private final AdoptionRepository adoptionRepository;
+    private final AdoptionService adoptionService;
 
-    public PetController(PetService petService, PetRepository petRepository, AdoptionRepository adoptionRepository) {
+    public PetController(
+        PetService petService,
+        PetRepository petRepository,
+        AdoptionRepository adoptionRepository,
+        AdoptionService adoptionService
+    ) {
         this.petService = petService;
         this.petRepository = petRepository;
         this.adoptionRepository = adoptionRepository;
+        this.adoptionService = adoptionService;
     }
 
     @GetMapping
@@ -154,10 +163,38 @@ public class PetController {
             var pet = petService.buscarDetalhe(cpfDono, nome, sessionCpf);
             model.addAttribute("pet", pet);
             model.addAttribute("isOwner", sessionCpf != null && sessionCpf.equals(cpfDono));
+            model.addAttribute("loggedIn", sessionCpf != null);
             return "pet/perfil";
         } catch (PetValidationException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/pets/search";
         }
+    }
+
+    @PostMapping("/{cpfDono}/{nome}/adotar")
+    public String solicitarAdocao(
+        @PathVariable String cpfDono,
+        @PathVariable String nome,
+        @RequestParam boolean permanente,
+        @RequestParam(required = false) LocalDate dataFim,
+        HttpSession session,
+        RedirectAttributes redirectAttributes
+    ) {
+        String sessionCpf = (String) session.getAttribute("cpf");
+        if (sessionCpf == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            adoptionService.solicitarAdocao(cpfDono, nome, permanente, dataFim, sessionCpf);
+            redirectAttributes.addFlashAttribute(
+                "success",
+                "Solicitação enviada! Acompanhe em Minhas adoções."
+            );
+        } catch (PetValidationException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/pets/{cpfDono}/{nome}";
     }
 }

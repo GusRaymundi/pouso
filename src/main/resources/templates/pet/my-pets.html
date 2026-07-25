@@ -60,7 +60,7 @@
                     <div class="row wrap small-space margin-top">
                         <span class="chip border small" th:text="${pet.sexoDescricao}">Sexo</span>
                         <span class="chip border small" th:text="${pet.isCastrado ? 'Castrado' : 'Nao castrado'}">Castracao</span>
-                        <span class="chip border small" th:text="${pet.isPermanente ? 'Permanente' : 'Temporario'}">Tipo</span>
+                        <span class="chip border small" th:text="${pet.isPermanente == null ? 'Nao informado' : (pet.isPermanente ? 'Permanente' : 'Temporario')}">Tipo</span>
                         <span class="chip border small" th:text="'Cadastro: ' + ${pet.dataCadastroFormatada}">Cadastro</span>
                     </div>
                 </div>
